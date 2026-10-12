@@ -1,10 +1,13 @@
 # Stack i infrastruktura
 
-Data: 2026-10-12. Status: cały stack i infrastruktura zatwierdzone przez użytkownika; implementacja jeszcze nie rozpoczęta.
+Data: 2026-10-12. Status: cały stack i infrastruktura zatwierdzone przez użytkownika; faza 1 zaimplementowana, oczekuje na przegląd użytkownika.
 
 - TypeScript dla silnika i interfejsu; strategie graczy pozostają w JavaScript.
-- Angular w najnowszej stabilnej wersji i Angular CLI do uruchamiania i budowania aplikacji. Dokładna wersja będzie sprawdzona i przypięta podczas inicjalizacji.
-- Standalone components, Signals do stanu interfejsu i tryb zoneless. Aplikacja renderowana po stronie klienta, bez SSR.
+- Angular 22 i Angular CLI 22 do uruchamiania i budowania aplikacji. Dokładne zgodne wersje poprawek zostaną sprawdzone i przypięte podczas inicjalizacji.
+- Standalone components, Signals do stanu interfejsu i tryb zoneless, o ile integracje nie ujawnią konkretnej przeszkody. Aplikacja renderowana po stronie klienta, bez SSR.
+- Nowe formularze korzystają z Signal Forms; nie dodajemy formularzy wyłącznie w celu użycia tej funkcji.
+- Nazwy plików i klas bez sufiksów technicznych Component/Service oraz `.component`/`.service`, np. `board.ts` i `match-store.ts`. Testy zachowują `.spec.ts`.
+- Stosujemy oficjalne skille Angulara wskazane na https://angular.dev/ai/agent-skills, w szczególności `angular-developer`, oraz oficjalny style guide. Przy inicjalizacji sprawdzamy także `angular-new-app`.
 - PixiJS od MVP.0 do plansz i jednostek: proste kształty na start, sprite’y i animacje w MVP.1. Angular i HTML/CSS obsługują przyciski, statystyki oraz logi.
 - Vitest przez narzędzia Angular CLI do testów silnika i istotnych zachowań interfejsu.
 - Node.js i npm jako narzędzia lokalne oraz CI; zgodne wersje zostaną przypięte przy inicjalizacji.
@@ -41,3 +44,7 @@ Zmiana propozycji po sugestii użytkownika: Angular zastępuje samodzielny zesta
 - Katalog wyglądu pozwala zastąpić kształty grafikami bez zmian w silniku i API strategii.
 - Stałe kroki symulacji są niezależne od pętli renderowania, co umożliwia zmianę prędkości i przyszłe rozegranie bez animacji.
 - Nie tworzymy tymczasowego renderera bezpośrednio w Canvas 2D. PixiJS prezentuje grafikę 2D w elemencie canvas z rendererem GPU.
+
+## Wersje przypięte w fazie 1
+
+Angular i CLI 22.2.2, PixiJS 8.22.0, TypeScript 6.0.3, Vitest 5.0.4, Node 22.23.2, npm 12.0.2. Domyślny zoneless i OnPush Angulara 22, bez Zone.js. Wersje zależności są dokładne, z package-lock.json.

@@ -1,0 +1,29 @@
+:root {
+  color-scheme: dark;
+  --text: #e6edef;
+  --muted: #9aaeb6;
+  --border: #2c3a40;
+  --panel: #192329;
+  --mint: #69ddbe;
+  --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--text);
+  background: #10181c;
+  font-synthesis: none;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  min-width: 360px;
+}
+a:focus-visible {
+  outline: 2px solid var(--mint);
+  outline-offset: 6px;
+  border-radius: 4px;
+}
+::selection {
+  background: #315a50;
+  color: white;
+}

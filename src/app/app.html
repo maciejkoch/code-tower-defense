@@ -1,0 +1,93 @@
+<div class="workspace">
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="Code Tower Defense — strona główna">
+      <span class="brand-symbol" aria-hidden="true">&lt;/&gt;</span>
+      <span>CODE<span class="brand-subtitle">TOWER DEFENSE</span></span>
+    </a>
+    <span class="version">LOKALNY POJEDYNEK <span class="version-tag">MVP.0</span></span>
+  </header>
+  <main>
+    <section class="arena-heading" aria-labelledby="arena-title">
+      <div>
+        <p class="eyebrow">ARENA / 01</p>
+        <h1 id="arena-title">Pole gry</h1>
+        <p class="intro">Dwie strategie. Dwa pola obrony. Jeden pojedynek.</p>
+      </div>
+      <div class="match-state">
+        <span class="status"><span class="status-dot" aria-hidden="true"></span>Przygotowanie</span>
+        <span class="clock">{{ match.time() }}<span> s</span></span>
+        <span class="clock-label">CZAS SYMULACJI</span>
+      </div>
+    </section>
+    <div class="boards">
+      @for (player of match.state().players; track player.id) {
+        <section
+          class="player-panel"
+          [style.--player-color]="playerColors[player.id]"
+          [attr.aria-labelledby]="'player-' + player.id"
+        >
+          <header class="player-heading">
+            <div class="player-identity">
+              <span class="player-number" aria-hidden="true">0{{ player.id }}</span>
+              <div>
+                <h2 [id]="'player-' + player.id">Gracz {{ player.id }}</h2>
+                <p>POLE OBRONY</p>
+              </div>
+            </div>
+            <span class="board-dimensions"
+              >{{ player.board.width }} × {{ player.board.height }}</span
+            >
+          </header>
+          <dl class="stats">
+            <div>
+              <dt>Złoto</dt>
+              <dd class="gold">{{ player.gold }} <span>G</span></dd>
+            </div>
+            <div>
+              <dt>Przepuszczone moby</dt>
+              <dd>
+                {{ player.leaks }} <span>/ {{ match.state().config.match.leakLimit }}</span>
+              </dd>
+            </div>
+            <div>
+              <dt>Przychód</dt>
+              <dd>+{{ match.state().config.economy.goldPerSecond }} <span>G/s</span></dd>
+            </div>
+          </dl>
+          <app-board [board]="player.board" [playerId]="player.id" />
+          <div class="board-legend">
+            <span
+              ><span class="entry-icon" aria-hidden="true">→</span> Wejście
+              <span class="coordinates"
+                >({{ player.board.entry.x }}, {{ player.board.entry.y }})</span
+              ></span
+            >
+            <span
+              ><span class="base-icon" aria-hidden="true">⬡</span> Baza
+              <span class="coordinates"
+                >({{ player.board.base.x }}, {{ player.board.base.y }})</span
+              ></span
+            >
+          </div>
+          <div class="production">
+            <span>POZIOM MOBÓW</span>
+            <span
+              >Podstawowy <b>{{ player.mobLevels.basic }}</b></span
+            >
+            <span
+              >Ciężki <b>{{ player.mobLevels.heavy }}</b></span
+            >
+          </div>
+        </section>
+      }
+    </div>
+    <aside class="phase-note" aria-label="Stan implementacji">
+      <span class="phase-badge">FAZA 01</span>
+      <div>
+        <h2>Plansze gotowe do rozbudowy</h2>
+        <p>To podgląd stanu początkowego. Ruch mobów i sterowanie meczem pojawią się w fazie 2.</p>
+      </div>
+    </aside>
+  </main>
+  <footer><span>CODE TOWER DEFENSE</span><span>Strategia zaczyna się od kodu.</span></footer>
+</div>
