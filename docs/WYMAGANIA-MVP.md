@@ -18,13 +18,16 @@ Kolejność prac: wymagania → stack technologiczny i infrastruktura → implem
 - Strategię gracza realizuje kod wywołujący udostępniony interfejs, np. budowanie, produkcja i ulepszanie.
 - Prosta grafika; aplikacja dostępna w przeglądarce.
 - MVP musi umożliwiać rozegranie pełnego meczu.
+- MVP uruchamia pojedynek dwóch skryptów w jednej przeglądarce.
+- Interfejs zawiera dwa edytory strategii, przycisk start i podgląd meczu.
+- Rozgrywka dwóch osób online jest poza zakresem MVP.
 - Zabezpieczenia i optymalizacja kodu dostarczonego przez gracza są poza zakresem MVP. Walidacja kodu jest planowana na późniejszy etap.
 - Ustalenia przechowujemy w pliku, docelowo w repozytorium GitHub.
 
 ## Decyzje do podjęcia
 
 1. Przebieg meczu: strategie ustalane przed startem czy edytowane podczas gry; czas rzeczywisty czy tury; warunki remisu i maksymalny czas.
-2. Model rywalizacji: dwie osoby online, lokalne porównanie dwóch skryptów, bot demonstracyjny; tworzenie i dołączanie do meczu.
+2. Model rywalizacji: lokalny pojedynek dwóch skryptów jest ustalony; pozostaje decyzja o strategiach demonstracyjnych.
 3. Mapa: osobne tory czy wspólna plansza; stałe ścieżki czy wyznaczanie drogi; miejsca budowy; blokowanie drogi.
 4. Ekonomia: zasoby początkowe, przychód, nagrody za zabicia, koszty, limity i czas produkcji.
 5. Jednostki: typy wież i mobów, ich parametry, wybór celu, zakres i zasady ulepszeń.
@@ -47,6 +50,7 @@ Powyższe propozycje wymagają potwierdzenia.
 ## Rejestr decyzji
 
 - 2026-10-12: zapisano początkowe założenia użytkownika; stack i infrastruktura pozostają nieustalone.
+- 2026-10-12: zatwierdzono lokalny pojedynek dwóch skryptów w jednej przeglądarce, dwa edytory, przycisk start i obserwację meczu; multiplayer online poza MVP.
 
 ## Repozytorium
 
