@@ -16,7 +16,7 @@ Kolejność prac: wymagania → stack technologiczny i infrastruktura → implem
 - Wieże i moby działają autonomicznie. Moby próbują dotrzeć do bazy przeciwnika.
 - Gracz przegrywa po przepuszczeniu 20 mobów do swojej bazy. Osiągnięcie progu przez obu graczy w tym samym kroku symulacji oznacza remis.
 - Strategię gracza realizuje kod wywołujący udostępniony interfejs, np. budowanie, produkcja i ulepszanie.
-- Prosta grafika; aplikacja dostępna w przeglądarce.
+- Prosta grafika; aplikacja dostępna w przeglądarce. PixiJS jest używane od MVP.0 do renderowania plansz i jednostek.
 - MVP musi umożliwiać rozegranie pełnego meczu.
 - MVP uruchamia pojedynek dwóch skryptów w jednej przeglądarce.
 - MVP.0 zawiera przycisk start i podgląd meczu; strategie są w plikach repozytorium. Dwa edytory strategii zostają przeniesione do MVP.1.
@@ -157,7 +157,7 @@ Parametry są punktem wyjścia do testów i znajdują się w centralnej konfigur
 ## Zakres aplikacji i odbiór MVP.0 — zatwierdzone
 
 - Docelowe urządzenie: komputer; aktualne Chrome i Firefox. Obsługa telefonu poza MVP.
-- Prosta grafika 2D: siatka, kolory graczy, rozróżnialne jednostki, paski zdrowia i poziomy wież.
+- Prosta grafika 2D w PixiJS: kształty, siatka, kolory graczy, rozróżnialne jednostki, paski zdrowia i poziomy wież. Silnik jest niezależny od grafiki; katalog wyglądu umożliwia późniejsze użycie sprite’ów.
 - Podczas meczu widoczne są oba pola, złoto, ulepszenia mobów, liczba przepuszczeń, czas symulacji i osobne logi graczy.
 - Po zakończeniu wyświetlane są wynik i przyczyna zakończenia.
 - Pierwszy deployment jest przeznaczony dla zaufanych testerów. Uruchamiane strategie pochodzą z plików repozytorium; brak pobierania kodu innych graczy przez aplikację.
@@ -187,7 +187,7 @@ Kryteria odbioru MVP.0:
 
 - [API strategii](API-STRATEGII.md): szczegółowy kontrakt i konwencje implementacyjne.
 - [Scenariusze odbioru](ODBIOR-MVP.md): weryfikacja grywalności i zasad.
-- Wymagania funkcjonalne MVP.0 są domknięte. Następny etap to wybór stacku i infrastruktury; nie zostały jeszcze wybrane.
+- Wymagania funkcjonalne MVP.0 są domknięte. Stack i infrastruktura są zatwierdzone w STACK-I-INFRA.md. Następny etap: implementacja.
 - Początkowy balans wymaga sprawdzenia w grywalnej implementacji.
 
 ## Rejestr decyzji
@@ -218,6 +218,12 @@ Kryteria odbioru MVP.0:
 - 2026-10-12: zatwierdzono pozycje wejścia/bazy, odległość w linii prostej i strzelanie przez wieże, deterministyczne remisy tras/celów, jednoczesne ataki i pojedynczą nagrodę, atak w kroku budowy, zachowanie cooldownu przy ulepszeniu oraz przychód przed strategią od kolejnego kroku. Domknięto wymagania funkcjonalne MVP.0.
 
 - 2026-10-12: po przeglądzie doprecyzowano czas jako pochodny kroku symulacji, niezależny od renderowania, i dodano jawny widok własnych mobów ofensywnych `outgoingMobs`.
+
+- 2026-10-12: zatwierdzono PixiJS od MVP.0, kształty na początek i architekturę umożliwiającą zastąpienie ich grafikami bez zmian w silniku. Zastępuje to propozycję bezpośredniego renderera Canvas 2D.
+
+- 2026-10-12: zatwierdzono ręczne uruchamianie deploymentu; push nie aktualizuje wdrożonej strony.
+
+- 2026-10-12: zatwierdzono cały stack: Angular, TypeScript, PixiJS, Vitest, GitHub Actions i GitHub Pages, bez backendu i bazy; deployment ręczny.
 
 ## Repozytorium
 
