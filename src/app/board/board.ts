@@ -10,11 +10,11 @@ import {
   viewChild,
 } from '@angular/core';
 import type { BoardConfig } from '../../game/config/game-config';
-import type { MobState, PlayerId } from '../../game/engine/model';
+import type { MobState, PlayerId, TowerState } from '../../game/engine/model';
 import { APPEARANCE } from '../../game/renderer/appearance';
 import type { BoardRenderer } from '../../game/renderer/board-renderer';
 
-type RendererHandle = Pick<BoardRenderer, 'mount' | 'drawMobs' | 'destroy'>;
+type RendererHandle = Pick<BoardRenderer, 'mount' | 'drawUnits' | 'destroy'>;
 
 export const LOAD_BOARD_RENDERER = new InjectionToken<() => Promise<RendererHandle>>(
   'Load board renderer',
@@ -65,6 +65,7 @@ export class Board {
   readonly board = input.required<BoardConfig>();
   readonly playerId = input.required<PlayerId>();
   readonly mobs = input<readonly MobState[]>([]);
+  readonly towers = input<readonly TowerState[]>([]);
   private renderer: RendererHandle | undefined;
   protected readonly error = signal(false);
   private readonly loadRenderer = inject(LOAD_BOARD_RENDERER);
@@ -73,7 +74,7 @@ export class Board {
     const board = this.board();
     return (
       `Pole obrony gracza ${this.playerId()}: ${board.width} na ${board.height} pól. ` +
-      `Wejście (${board.entry.x}, ${board.entry.y}), baza (${board.base.x}, ${board.base.y}). Moby na polu: ${this.mobs().length}.`
+      `Wejście (${board.entry.x}, ${board.entry.y}), baza (${board.base.x}, ${board.base.y}). Moby na polu: ${this.mobs().length}. Wieże: ${this.towers().length}.`
     );
   });
   protected readonly aspectRatio = computed(() => {
@@ -85,7 +86,8 @@ export class Board {
   constructor() {
     afterRenderEffect(() => {
       const mobs = this.mobs();
-      this.renderer?.drawMobs(mobs);
+      const towers = this.towers();
+      this.renderer?.drawUnits(mobs, towers);
     });
     afterRenderEffect((onCleanup) => {
       const host = this.surface().nativeElement;
@@ -109,7 +111,7 @@ export class Board {
           await renderer.mount(host, board, playerId);
           if (!cancelled) {
             this.renderer = loaded;
-            loaded.drawMobs(this.mobs());
+            loaded.drawUnits(this.mobs(), this.towers());
           }
         })
         .catch(() => {

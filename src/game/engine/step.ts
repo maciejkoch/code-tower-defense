@@ -1,13 +1,17 @@
 import type { MatchState, PlayerState } from './model';
 import { moveMob } from './movement';
+import { addIncome } from './economy';
 import { getOutcome } from './outcome';
 import { createDistanceField, sameCell } from './pathfinding';
 
 /** No clocks, rendering or demo rules here. Each call advances exactly one fixed step. */
-export function stepMatch(state: MatchState): MatchState {
+export function stepMatch(
+  state: MatchState,
+  resolveActions: (state: MatchState) => MatchState = (state) => state,
+): MatchState {
   if (state.status !== 'running') return state;
   const advancePlayer = (player: PlayerState): PlayerState => {
-    const field = createDistanceField(player.board);
+    const field = createDistanceField(player.board, player.towers);
     const moved = player.mobs.map((mob) =>
       moveMob(mob, player.board, field, state.config.simulation.stepSeconds),
     );
@@ -21,11 +25,14 @@ export function stepMatch(state: MatchState): MatchState {
   // Resolve both fields before testing defeat, including simultaneous losses.
   const players = [advancePlayer(state.players[0]), advancePlayer(state.players[1])] as const;
   const result = getOutcome(players, state.config.match.leakLimit);
-  return {
+  const next: MatchState = {
     ...state,
     tick: state.tick + 1,
     players,
     result,
     status: result ? 'finished' : 'running',
   };
+  // Tick 0 is prepared at Start. Finish its movement interval, then prepare
+  // the next tick: income and actions precede that tick's next movement.
+  return result ? next : resolveActions(addIncome(next));
 }

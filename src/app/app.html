@@ -11,7 +11,7 @@
       <div>
         <p class="eyebrow">ARENA / 01</p>
         <h1 id="arena-title">Pole gry</h1>
-        <p class="intro">Demonstracja ruchu. Dwa pola obrony.</p>
+        <p class="intro">Budowa labiryntu. Produkcja mobów. Ekonomia.</p>
       </div>
       <div class="match-state">
         <span class="status"
@@ -44,7 +44,7 @@
           <dl class="stats">
             <div>
               <dt>Złoto</dt>
-              <dd class="gold">{{ player.gold }} <span>G</span></dd>
+              <dd class="gold">{{ player.gold | number: '1.0-1' }} <span>G</span></dd>
             </div>
             <div>
               <dt>Przepuszczone moby</dt>
@@ -57,7 +57,12 @@
               <dd>+{{ match.state().config.economy.goldPerSecond }} <span>G/s</span></dd>
             </div>
           </dl>
-          <app-board [board]="player.board" [playerId]="player.id" [mobs]="player.mobs" />
+          <app-board
+            [board]="player.board"
+            [playerId]="player.id"
+            [mobs]="player.mobs"
+            [towers]="player.towers"
+          />
           <div class="board-legend">
             <span
               ><span class="entry-icon" aria-hidden="true">→</span> Wejście
@@ -81,16 +86,18 @@
               >Ciężki <b>{{ player.mobLevels.heavy }}</b></span
             >
           </div>
+          <app-player-log [entries]="player.logs" [playerId]="player.id" />
         </section>
       }
     </div>
     <aside class="phase-note" aria-label="Stan implementacji">
-      <span class="phase-badge">FAZA 02</span>
+      <span class="phase-badge">FAZA 03</span>
       <div>
-        <h2>Demonstracja ruchu mobów</h2>
+        <h2>Demonstracja ekonomii i labiryntu</h2>
         <p>
-          Każda strona wysyła jednego moba na sekundę. Moby mają kolor przeciwnika. To scenariusz
-          demonstracyjny: złoto jest stałe, walka i strategie pojawią się później.
+          Wieże zmieniają trasę mobów. Próba zamknięcia przejścia w {{ wallClosureTime }} s zostaje
+          odrzucona, a sprzedaż wieży w {{ demo.sellSeconds }} s otwiera krótszą drogę. To
+          scenariusz demonstracyjny; wieże jeszcze nie strzelają.
         </p>
       </div>
     </aside>

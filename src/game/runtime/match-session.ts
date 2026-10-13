@@ -2,7 +2,7 @@ import { GAME_CONFIG, type GameConfig } from '../config/game-config';
 import { createMatch } from '../engine/create-match';
 import { stepMatch } from '../engine/step';
 import type { MatchState } from '../engine/model';
-import { spawnDemoMobs } from './demo';
+import { runDemo } from './demo';
 
 /** Match lifecycle and demo orchestration, with no framework or wall clock. */
 export class MatchSession {
@@ -17,7 +17,9 @@ export class MatchSession {
   }
 
   start(): void {
-    if (this.current.status === 'ready' || this.current.status === 'paused') {
+    if (this.current.status === 'ready') {
+      this.current = runDemo({ ...this.current, status: 'running' });
+    } else if (this.current.status === 'paused') {
       this.current = { ...this.current, status: 'running' };
     }
   }
@@ -41,7 +43,7 @@ export class MatchSession {
   }
 
   step(): boolean {
-    if (this.current.status === 'running') this.current = stepMatch(spawnDemoMobs(this.current));
+    if (this.current.status === 'running') this.current = stepMatch(this.current, runDemo);
     return this.current.status === 'running';
   }
 }

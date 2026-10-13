@@ -2,6 +2,7 @@ import type { BoardConfig, Cell, GameConfig } from '../config/game-config';
 
 export type PlayerId = 1 | 2;
 export type MobType = 'basic' | 'heavy';
+export type TowerType = 'basic' | 'splash';
 export type MatchStatus = 'ready' | 'running' | 'paused' | 'finished';
 export type MatchResult =
   | { readonly reason: 'leak-limit'; readonly winnerId: PlayerId | null }
@@ -25,12 +26,34 @@ export interface MobState {
   readonly progress: number;
 }
 
+export interface TowerState {
+  readonly id: number;
+  readonly type: TowerType;
+  readonly level: number;
+  readonly x: number;
+  readonly y: number;
+  readonly damage: number;
+  readonly range: number;
+  readonly attackInterval: number;
+  readonly cooldownRemaining: number;
+  readonly totalSpent: number;
+}
+
+export interface LogEntry {
+  readonly tick: number;
+  readonly time: number;
+  readonly message: string;
+  readonly kind: 'success' | 'error';
+}
+
 export interface PlayerState {
   readonly id: PlayerId;
   readonly gold: number;
   readonly leaks: number;
   readonly mobLevels: Readonly<Record<MobType, number>>;
   readonly board: BoardConfig;
+  readonly towers: readonly TowerState[];
+  readonly logs: readonly LogEntry[];
   /** Opponent-owned mobs currently on this player's defense field. */
   readonly mobs: readonly MobState[];
 }

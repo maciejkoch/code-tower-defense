@@ -2,7 +2,7 @@
 
 Programowalne tower defense: dwa skrypty JavaScript będą rozgrywać lokalny pojedynek w jednej przeglądarce.
 
-**Faza 2 — implementacja gotowa do przeglądu.** Moby poruszają się po obu planszach, można uruchomić, wstrzymać, wznowić i przerwać demonstrację, zmienić prędkość oraz utworzyć nowy mecz. Symetryczny scenariusz kończy się remisem po 26,5 s czasu symulacji. Ekonomia, walka i strategie pozostają w kolejnych fazach.
+**Faza 3 — implementacja gotowa do przeglądu.** Demo korzysta z prawdziwych kosztów, przychodu, produkcji dwóch typów mobów oraz budowy i sprzedaży wież. Wieże zmieniają trasy; błędy akcji i sprzedaż są widoczne w osobnych logach. Walka i ulepszenia powstaną w fazie 4, a strategie JavaScript w fazie 5.
 
 ## Uruchomienie
 
@@ -31,39 +31,40 @@ npm run test:watch # testy podczas edycji
 
 Testy obejmują inicjalizację i niezależność stanu meczu, przekazywanie konfiguracji, integrację widoku z rendererem, zwalnianie zasobów, błąd inicjalizacji grafiki i dostępność HTML przez axe-core. Test axe działa w jsdom, bez reguły kontrastu, która wymaga prawdziwego renderowania. Testy fazy 2 obejmują też trasowanie, zakręty, nakładanie się mobów, remisy i zwycięstwa, pauzę/reset, przyciski UI i identyczny stan końcowy przy różnych prędkościach oraz nieregularnych klatkach. Rzeczywisty obraz PixiJS wymaga także przeglądu w przeglądarce; status sprawdzeń znajduje się w raporcie odbioru fazy.
 
-## Odbiór fazy 2
+## Odbiór fazy 3
 
-1. Otwórz aplikację i kliknij **Start**. Na obu polach pojawia się jeden mob na sekundę symulacji, także w pierwszym kroku. Moby mają kolor wysyłającego gracza; idą od `(0, 6)` do `(15, 6)`.
-2. Kliknij **Pauza**: czas, pozycje i przepuszczenia zatrzymują się. **Wznów** kontynuuje ten sam mecz.
-3. Sprawdź **0.5×, 1×, 2× i 4×**. Zmienia się tempo odtwarzania, a silnik nadal wykonuje kroki po 0,1 s. Prędkość można zmieniać również podczas pauzy.
-4. Pozwól demonstracji dobiec do końca. Przy domyślnej konfiguracji jest to **remis, 20/20 przepuszczeń po obu stronach, czas 26,5 s**. Przy 4× trwa to około 7 s czasu rzeczywistego. Po zakończeniu stan przestaje się zmieniać.
-5. Kliknij **Nowy mecz**. Wracają czas 0, brak mobów i 0 przepuszczeń; wybrana prędkość pozostaje ustawieniem odtwarzania. Możesz ponownie kliknąć Start.
-6. W kolejnym meczu kliknij **Pauza**, potem **Przerwij**: wynik to „Mecz przerwany — bez zwycięzcy”. Przerwanie działa także w trakcie ruchu.
+1. Przed startem obie strony mają 200 G i puste plansze. Kliknij **Start**: każda strona buduje basic `(4, 6)` za 50 G i splash `(8, 6)` za 100 G oraz produkuje moba podstawowego za 20 G. Saldo wynosi 30 G, czas pozostaje 0 s do pierwszego kroku ruchu.
+2. W logach są także odrzucone próby: budowa na wejściu (`RESERVED_CELL`), na istniejącej wieży (`CELL_OCCUPIED`) oraz zakup splash przy niedostatecznym saldzie (`INSUFFICIENT_GOLD`). Nie pobierają złota.
+3. Wybierz **4×**, aby szybciej obejrzeć scenariusz. Ściana w kolumnie 4 rośnie co 8 s czasu symulacji, a moby obchodzą ją najkrótszą dostępną drogą. Podstawowe moby są okrągłe, ciężkie kwadratowe. Każda trzecia produkcja jest ciężka.
+4. W **88 s** ostatnia próba zamknięcia ściany zostaje odrzucona jako `PATH_BLOCKED`. Pozostaje droga przez wiersz 0.
+5. W **92 s** wieża `(4, 6)` zostaje sprzedana, z logiem zwrotu **25 G**. Trasy skracają się, a moby w ruchu kończą aktualną krawędź, zanim wybiorą nowy kierunek.
+6. Kliknij **Pauza**: przychód, ruch i akcje zatrzymują się. **Wznów** kontynuuje. **Przerwij** kończy bez zwycięzcy, także podczas pauzy.
+7. Pełna demonstracja kończy się **remisem po 160,5 s** czasu symulacji (około 40 s przy 4×), z 20 przepuszczeniami na stronę. **Nowy mecz** resetuje jednostki, saldo, logi, ID i czas; wybrana prędkość pozostaje ustawieniem odtwarzania.
 
-Demo produkuje darmowe moby podstawowe. Złoto pozostaje 200, a pokazany przychód +10 G/s jest parametrem przyszłej ekonomii. Na pustych planszach najkrótsza trasa jest prosta; trasy z przeszkodami i zakrętami są sprawdzane w testach, a widoczny labirynt powstanie w fazie 3.
+Oba logi pokazują pełną historię, od najnowszych wpisów; starsze wpisy można przewinąć. Wieże basic mają kwadratowy fundament, splash kształt rombu. W tej fazie są przeszkodami i jeszcze nie atakują.
 
-Numer kroku w stanie oznacza liczbę zakończonych kroków; jego iloczyn z długością kroku daje widoczny czas. Akcje demonstracji są rozstrzygane na początku kroku, przed ruchem. Opóźnione klatki nie zmieniają wielkości kroków: zaległe kroki są zachowywane i wykonywane partiami. Pauza zatrzymuje dopływ czasu odtwarzania.
+Parametry gry i ekonomii są w `src/game/config/game-config.ts`; harmonogram demonstracji w `demo-config.ts`. Możesz zmienić parametry i uruchomić nowy mecz po przeładowaniu aplikacji. Demo ma domyślne pozycje dla mapy 16 × 12; zmiana rozmiaru mapy może wymagać zmiany jego harmonogramu i współrzędnych.
 
-## Kolejność przeglądu kodu fazy 2
+## Kolejność przeglądu kodu fazy 3
 
-1. `src/game/engine/model.ts` — stan moba, krawędzi ruchu i wyniku meczu.
-2. `src/game/engine/pathfinding.ts` — odległości od bazy (BFS) i deterministyczny wybór kierunku.
-3. `src/game/engine/movement.ts`, `step.ts`, `outcome.ts` — ruch, przepuszczenia i wynik obu pól w jednym kroku.
-4. `src/game/runtime/demo.ts`, `match-session.ts`, `playback.ts` — scenariusz, cykl życia meczu i odtwarzanie stałych kroków.
-5. `src/app/match/match-store.ts` — Signals i planowanie klatek, powiązane z czasem życia areny.
-6. `src/app/match-controls/match-controls.ts` — sterowanie i wynik; jeden przycisk Start/Pauza/Wznów zachowuje fokus.
-7. `src/app/board/board.ts` i `src/game/renderer/board-renderer.ts` — przekazywanie mobów do renderera i ich prezentacja.
+1. `src/game/engine/model.ts` — wieże, moby i logi.
+2. `src/game/engine/placement.ts` — zajętość pól, drożność od wejścia i każdego żywego moba.
+3. `src/game/engine/actions.ts` — synchroniczne wyniki budowy, sprzedaży i produkcji. Sukces zwraca nowy stan i ID; błąd zachowuje poprzedni stan.
+4. `src/game/engine/economy.ts`, `step.ts` i `runtime/match-session.ts` — początkowe akcje przy czasie 0, następnie ruch w stałych odstępach oraz przychód przed akcjami kolejnego kroku. Dziesięć kroków bez wydatków daje 10 G przychodu.
+5. `src/game/runtime/demo.ts` — scenariusz korzystający z tych samych akcji i zapisujący wyniki do logów.
+6. `src/game/renderer/units-layer.ts` i `src/app/player-log/player-log.ts` — prezentacja jednostek i logów.
 
-Testy znajdują się obok kodu, w plikach `.spec.ts`. Parametry gry są w `game-config.ts`, odstęp demonstracyjnej produkcji w `demo-config.ts`, a wygląd w `appearance.ts`.
+Testy są obok kodu. Obejmują koszty i zwroty, atomowość błędów, współdzielony licznik ID, drożność dla mobów i wejścia, oba końce zajętej krawędzi, zmianę tras bez teleportacji, deterministyczny wynik i sterowanie interfejsem.
 
 ## Stack i granice
 
 Angular **22.2.2**, PixiJS **8.22.0**, TypeScript **6.0.3**, Vitest **5.0.4**. Dokładne zależności zapisano w `package.json` i `package-lock.json`. Standalone, domyślne w Angularze 22 OnPush i zoneless, `signal`, `computed` oraz signal inputs; bez Zone.js. Signal Forms będą używane, gdy powstaną formularze.
 
-Silnik nie importuje Angulara ani PixiJS. UI czyta stan przez store, a renderer tylko go prezentuje. PixiJS ładuje się osobno i odrysowuje moby po zmianie stanu. Siatka jest tworzona raz; renderer nie prowadzi własnej symulacji. `@xmldom/xmldom` na liście `allowedCommonJsDependencies` jest zależnością PixiJS; wpis jawnie akceptuje jej format modułu, bez zmiany reguł gry.
+Silnik nie importuje Angulara ani PixiJS. UI czyta stan przez store, a renderer tylko go prezentuje. PixiJS ładuje się osobno i odrysowuje moby oraz wieże po zmianie stanu. Siatka jest tworzona raz; renderer nie prowadzi własnej symulacji. `@xmldom/xmldom` na liście `allowedCommonJsDependencies` jest zależnością PixiJS; wpis jawnie akceptuje jej format modułu, bez zmiany reguł gry.
 
 Repozytorium utworzono przez Angular CLI, zgodnie z oficjalnymi [skillami Angulara](https://angular.dev/ai/agent-skills). Katalog `runtime` obsługuje już demonstrację. Katalog `strategy` i pliki strategii powstaną w fazie 5.
 
+- [Odbiór fazy 3](docs/ODBIOR-FAZY-3.md)
 - [Odbiór fazy 2](docs/ODBIOR-FAZY-2.md)
 - [Odbiór fazy 1](docs/ODBIOR-FAZY-1.md)
 - [Plan faz](docs/PLAN-IMPLEMENTACJI.md)

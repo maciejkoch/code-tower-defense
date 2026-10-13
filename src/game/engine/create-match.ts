@@ -11,6 +11,8 @@ export function createMatch(config: GameConfig = GAME_CONFIG): MatchState {
     mobLevels: { basic: 1, heavy: 1 },
     board: structuredClone(matchConfig.board),
     mobs: [],
+    towers: [],
+    logs: [],
   });
 
   return {
