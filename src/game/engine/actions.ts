@@ -136,11 +136,27 @@ export function spawnMob(
     progress: 0,
     remainingDistance: distanceAt(createDistanceField(defender.board, defender.towers), entry),
   };
-  const paid = updatePlayer(state, { ...owner, gold: owner.gold - stats.cost });
+  const paid = updatePlayer(state, {
+    ...owner,
+    gold: owner.gold - stats.cost,
+    income: Math.min(
+      state.config.economy.maxGoldPerSecond,
+      // Quantize fractional G/s to avoid accumulating binary rounding error.
+      Math.round((owner.income + state.config.economy.productionIncome[type]) * 1e9) / 1e9,
+    ),
+  });
+  const enterNow = defender.queuedMobs.length === 0 && defender.spawnCooldownRemaining <= 1e-9;
   return {
     state: updatePlayer(
       paid,
-      { ...paid.players[defender.id - 1], mobs: [...defender.mobs, mob] },
+      {
+        ...paid.players[defender.id - 1],
+        mobs: enterNow ? [...defender.mobs, mob] : defender.mobs,
+        queuedMobs: enterNow ? defender.queuedMobs : [...defender.queuedMobs, mob],
+        spawnCooldownRemaining: enterNow
+          ? state.config.simulation.mobSpawnIntervalSeconds
+          : defender.spawnCooldownRemaining,
+      },
       state.nextEntityId + 1,
     ),
     result: { ok: true, mobId: mob.id },

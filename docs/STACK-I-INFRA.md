@@ -1,6 +1,6 @@
 # Stack i infrastruktura
 
-Data: 2026-10-12. Status: cały stack i infrastruktura zatwierdzone przez użytkownika; fazy 1–3 zaakceptowane; faza 4 zaimplementowana i oczekuje na odbiór.
+Data: 2026-10-12. Status: cały stack i infrastruktura zatwierdzone przez użytkownika; fazy 1–4 zaakceptowane; faza 5 zaimplementowana i oczekuje na odbiór.
 
 - TypeScript dla silnika i interfejsu; strategie graczy pozostają w JavaScript.
 - Angular 22 i Angular CLI 22 do uruchamiania i budowania aplikacji. Dokładne zgodne wersje poprawek zostaną sprawdzone i przypięte podczas inicjalizacji.

@@ -7,10 +7,13 @@ export function createMatch(config: GameConfig = GAME_CONFIG): MatchState {
   const createPlayer = (id: PlayerId): PlayerState => ({
     id,
     gold: matchConfig.economy.startingGold,
+    income: Math.min(matchConfig.economy.goldPerSecond, matchConfig.economy.maxGoldPerSecond),
     leaks: 0,
     mobLevels: { basic: 1, heavy: 1 },
     board: structuredClone(matchConfig.board),
     mobs: [],
+    queuedMobs: [],
+    spawnCooldownRemaining: 0,
     towers: [],
     logs: [],
   });

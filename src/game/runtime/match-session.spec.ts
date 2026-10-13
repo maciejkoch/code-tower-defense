@@ -52,7 +52,7 @@ describe('match session', () => {
     expect(session.state).toBe(initial);
     session.start();
     session.step();
-    expect(session.state.players[0].mobs[0].x).toBeCloseTo(0.2);
+    expect(session.state.players[0].mobs[0].x).toBeCloseTo(0.1);
     session.pause();
     const paused = session.state;
     session.step();
@@ -67,59 +67,41 @@ describe('match session', () => {
     expect(session.state).toEqual(initial);
   });
 
-  it('finishes the default demonstration at 185.5 seconds with 20 leaks per side', () => {
+  it('finishes the two JavaScript strategies under the offensive balance and deployment queue', () => {
     const session = new MatchSession();
     session.start();
     for (let i = 0; i < 2000; i++) session.step();
-    expect(session.state.tick).toBe(1855);
-    expect(session.state.result).toEqual({ reason: 'leak-limit', winnerId: null });
-    expect(session.state.players.map((player) => player.leaks)).toEqual([20, 20]);
+    expect(session.state.tick).toBe(322);
+    expect(session.state.result).toEqual({ reason: 'leak-limit', winnerId: 1 });
+    expect(session.state.players.map((player) => player.leaks)).toEqual([1, 20]);
   });
 
-  it('demonstrates all upgrade levels, snapshots mob health and refunds upgraded defenses', () => {
+  it('loads different strategies, preserves their memories through pause and resets the complete match', () => {
     const session = new MatchSession();
     session.start();
-    expect(session.state.tick).toBe(0);
-    expect(session.state.players.map((player) => player.gold)).toEqual([30, 30]);
-    session.step();
-    expect(session.state.players.map((player) => player.gold)).toEqual([31, 31]);
-    while (session.state.tick < 880) session.step();
-    for (const player of session.state.players) {
-      expect(player.towers.map((tower) => tower.level)).toEqual([3, 3]);
-      expect(player.mobLevels.heavy).toBe(2);
-      expect(
-        player.logs.some((entry) => entry.time === 60 && entry.message.includes('MAX_LEVEL')),
-      ).toBe(true);
-      expect(player.logs.some((entry) => entry.message.includes('Zabicie'))).toBe(true);
-    }
-    while (session.state.tick < 920) session.step();
-    expect(session.state.players[0].mobs.some((mob) => mob.level === 2 && mob.maxHp === 225)).toBe(
-      true,
-    );
-    while (session.state.tick < 1480) session.step();
-    for (const player of session.state.players) {
-      expect(player.mobLevels.heavy).toBe(3);
-      expect(player.mobs.some((mob) => mob.level === 3 && mob.maxHp === 300)).toBe(true);
-    }
-    while (session.state.tick < 1600) session.step();
-    for (const player of session.state.players) {
-      expect(player.towers).toEqual([]);
-      expect(
-        player.logs.some((entry) => entry.time === 160 && entry.message.includes('zwrot 87.5 G')),
-      ).toBe(true);
-      expect(
-        player.logs.some((entry) => entry.time === 160 && entry.message.includes('zwrot 175 G')),
-      ).toBe(true);
-      expect(player.gold).toBeGreaterThanOrEqual(0);
-    }
+    const initialTick = session.state;
+    expect(initialTick.players.map((player) => player.gold)).toEqual([50, 60]);
+    expect(initialTick.players[0].towers.map((tower) => tower.level)).toEqual([1]);
+    expect(initialTick.players[1].towers).toHaveLength(1);
+    for (let i = 0; i < 100; i++) session.step();
+    session.pause();
+    const paused = session.state;
+    session.start();
+    expect(session.state.tick).toBe(paused.tick);
+    expect(session.state.players[0].logs).toEqual(paused.players[0].logs);
+    session.reset();
+    expect(session.state).toEqual(createMatch());
+    session.start();
+    expect(session.state).toEqual(initialTick);
   });
 
   it('produces identical final states at every speed, with irregular frame timing and speed changes', () => {
     const reference = new MatchSession();
     reference.start();
-    while (reference.step()) {
+    for (let tick = 0; tick < 3000 && reference.step(); tick++) {
       /* Headless reference: no wall clock. */
     }
+    expect(reference.state.status).toBe('finished');
     for (const speed of PLAYBACK_SPEEDS) {
       const session = new MatchSession();
       const playback = new Playback(100);

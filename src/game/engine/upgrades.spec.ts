@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { GAME_CONFIG } from '../config/game-config';
+import { BASELINE_CONFIG as GAME_CONFIG } from '../balance/profiles';
 import { buildTower, sellTower, spawnMob, upgradeMob, upgradeTower } from './actions';
 import { createMatch } from './create-match';
 
@@ -63,7 +63,7 @@ describe('upgrades', () => {
   );
 
   it('rejects missing/foreign towers, invalid types and unaffordable upgrades without mutations', () => {
-    const state = buildTower(createMatch(), 1, 'splash', 4, 6).state;
+    const state = buildTower(createMatch(GAME_CONFIG), 1, 'splash', 4, 6).state;
     const expensive = upgradeTower(state, 1, 1).state; // Balance 0 after level 2.
     const checks = [
       [expensive, upgradeTower(expensive, 1, 1), 'INSUFFICIENT_GOLD'],

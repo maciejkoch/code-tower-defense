@@ -22,11 +22,12 @@ export function selectTarget(tower: TowerState, mobs: readonly MobState[]): MobS
 /** Select every attack from the same pre-damage state, then sum and apply damage. */
 export function resolveCombat(state: MatchState, elapsedSeconds: number): MatchState {
   if (state.status !== 'running') return state;
+  state = advanceCooldowns(state, elapsedSeconds);
   const attacks: AttackEvent[] = [];
   const defend = (player: PlayerState): PlayerState => {
     const damage = new Map<number, number>();
     const towers = player.towers.map((tower) => {
-      const cooldownRemaining = Math.max(0, tower.cooldownRemaining - elapsedSeconds);
+      const cooldownRemaining = tower.cooldownRemaining;
       if (cooldownRemaining > EPSILON) return { ...tower, cooldownRemaining };
       const target = selectTarget(tower, player.mobs);
       if (!target) return { ...tower, cooldownRemaining: 0 };
@@ -34,9 +35,17 @@ export function resolveCombat(state: MatchState, elapsedSeconds: number): MatchS
         tower.type === 'splash' ? (state.config.towers.splash.splashRadius ?? 0) : 0;
       const victims =
         tower.type === 'splash'
-          ? player.mobs.filter(
-              (mob) => mob.hp > 0 && distance(mob, target) <= splashRadius + EPSILON,
-            )
+          ? [
+              target,
+              ...player.mobs
+                .filter(
+                  (mob) =>
+                    mob.id !== target.id &&
+                    mob.hp > 0 &&
+                    distance(mob, target) <= splashRadius + EPSILON,
+                )
+                .sort((a, b) => distance(a, target) - distance(b, target) || a.id - b.id),
+            ].slice(0, state.config.towers.splash.maxTargets ?? 6)
           : [target];
       for (const mob of victims) damage.set(mob.id, (damage.get(mob.id) ?? 0) + tower.damage);
       attacks.push({
@@ -72,4 +81,17 @@ export function resolveCombat(state: MatchState, elapsedSeconds: number): MatchS
   };
   const players = [defend(state.players[0]), defend(state.players[1])] as const;
   return { ...state, players, attacks };
+}
+
+/** Timers advance together with movement, before the next strategy snapshot. */
+export function advanceCooldowns(state: MatchState, seconds: number): MatchState {
+  if (state.status !== 'running' || seconds === 0) return state;
+  const advance = (player: PlayerState): PlayerState => ({
+    ...player,
+    towers: player.towers.map((tower) => ({
+      ...tower,
+      cooldownRemaining: Math.max(0, tower.cooldownRemaining - seconds),
+    })),
+  });
+  return { ...state, players: [advance(state.players[0]), advance(state.players[1])] };
 }

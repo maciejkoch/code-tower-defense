@@ -1,0 +1,1878 @@
+{
+  "currentConfig": "B1: income 30; basic tower damage 15; basic mob cost 10; heavy cost 30; HP multipliers 1/2/6",
+  "withoutSplashLimit": [
+    {
+      "mode": "baseline",
+      "pair": "defense/basic",
+      "time": 300,
+      "finished": false,
+      "result": null,
+      "leaks": [
+        15,
+        0
+      ],
+      "towers": [
+        33,
+        0
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        0,
+        920
+      ],
+      "maxLive": 24
+    },
+    {
+      "mode": "baseline",
+      "pair": "defense/heavy",
+      "time": 300,
+      "finished": false,
+      "result": null,
+      "leaks": [
+        0,
+        0
+      ],
+      "towers": [
+        33,
+        0
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        0,
+        285
+      ],
+      "maxLive": 19
+    },
+    {
+      "mode": "baseline",
+      "pair": "defense/balanced",
+      "time": 300,
+      "finished": false,
+      "result": null,
+      "leaks": [
+        3,
+        0
+      ],
+      "towers": [
+        33,
+        17
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        0,
+        617
+      ],
+      "maxLive": 11
+    },
+    {
+      "mode": "baseline",
+      "pair": "balanced/heavy",
+      "time": 152.1,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 1
+      },
+      "leaks": [
+        13,
+        21
+      ],
+      "towers": [
+        17,
+        10
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        285,
+        114
+      ],
+      "maxLive": 42
+    },
+    {
+      "mode": "baseline",
+      "pair": "balanced/balanced",
+      "time": 150.5,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": null
+      },
+      "leaks": [
+        20,
+        20
+      ],
+      "towers": [
+        10,
+        10
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        297,
+        297
+      ],
+      "maxLive": 46
+    },
+    {
+      "mode": "baseline",
+      "pair": "defense/defense",
+      "time": 300,
+      "finished": false,
+      "result": null,
+      "leaks": [
+        0,
+        0
+      ],
+      "towers": [
+        33,
+        33
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        0,
+        0
+      ],
+      "maxLive": 0
+    },
+    {
+      "mode": "sendIncome50",
+      "pair": "defense/basic",
+      "time": 300,
+      "finished": false,
+      "result": null,
+      "leaks": [
+        15,
+        0
+      ],
+      "towers": [
+        33,
+        0
+      ],
+      "income": [
+        30,
+        13544
+      ],
+      "produced": [
+        0,
+        67568
+      ],
+      "maxLive": 6854
+    },
+    {
+      "mode": "sendIncome50",
+      "pair": "defense/heavy",
+      "time": 55.9,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 2
+      },
+      "leaks": [
+        21,
+        0
+      ],
+      "towers": [
+        28,
+        0
+      ],
+      "income": [
+        30,
+        86
+      ],
+      "produced": [
+        0,
+        94
+      ],
+      "maxLive": 58
+    },
+    {
+      "mode": "sendIncome50",
+      "pair": "defense/balanced",
+      "time": 120.4,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 2
+      },
+      "leaks": [
+        21,
+        0
+      ],
+      "towers": [
+        33,
+        8
+      ],
+      "income": [
+        30,
+        157
+      ],
+      "produced": [
+        0,
+        261
+      ],
+      "maxLive": 103
+    },
+    {
+      "mode": "sendIncome50",
+      "pair": "balanced/heavy",
+      "time": 52.2,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 1
+      },
+      "leaks": [
+        1,
+        20
+      ],
+      "towers": [
+        11,
+        9
+      ],
+      "income": [
+        61,
+        59
+      ],
+      "produced": [
+        119,
+        49
+      ],
+      "maxLive": 27
+    },
+    {
+      "mode": "sendIncome50",
+      "pair": "balanced/balanced",
+      "time": 48.5,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": null
+      },
+      "leaks": [
+        22,
+        22
+      ],
+      "towers": [
+        8,
+        8
+      ],
+      "income": [
+        57,
+        57
+      ],
+      "produced": [
+        94,
+        94
+      ],
+      "maxLive": 36
+    },
+    {
+      "mode": "sendIncome50",
+      "pair": "defense/defense",
+      "time": 300,
+      "finished": false,
+      "result": null,
+      "leaks": [
+        0,
+        0
+      ],
+      "towers": [
+        33,
+        33
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        0,
+        0
+      ],
+      "maxLive": 0
+    },
+    {
+      "mode": "sendIncome33",
+      "pair": "defense/basic",
+      "time": 18.7,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 2
+      },
+      "leaks": [
+        20,
+        0
+      ],
+      "towers": [
+        12,
+        0
+      ],
+      "income": [
+        30,
+        62
+      ],
+      "produced": [
+        0,
+        107
+      ],
+      "maxLive": 35
+    },
+    {
+      "mode": "sendIncome33",
+      "pair": "defense/heavy",
+      "time": 50.7,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 2
+      },
+      "leaks": [
+        20,
+        0
+      ],
+      "towers": [
+        26,
+        0
+      ],
+      "income": [
+        30,
+        125
+      ],
+      "produced": [
+        0,
+        106
+      ],
+      "maxLive": 74
+    },
+    {
+      "mode": "sendIncome33",
+      "pair": "defense/balanced",
+      "time": 102.1,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 2
+      },
+      "leaks": [
+        21,
+        0
+      ],
+      "towers": [
+        33,
+        7
+      ],
+      "income": [
+        30,
+        240
+      ],
+      "produced": [
+        0,
+        283
+      ],
+      "maxLive": 149
+    },
+    {
+      "mode": "sendIncome33",
+      "pair": "balanced/heavy",
+      "time": 38.4,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 1
+      },
+      "leaks": [
+        1,
+        20
+      ],
+      "towers": [
+        10,
+        8
+      ],
+      "income": [
+        65,
+        63
+      ],
+      "produced": [
+        87,
+        37
+      ],
+      "maxLive": 24
+    },
+    {
+      "mode": "sendIncome33",
+      "pair": "balanced/balanced",
+      "time": 46.9,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": null
+      },
+      "leaks": [
+        23,
+        23
+      ],
+      "towers": [
+        9,
+        9
+      ],
+      "income": [
+        76,
+        76
+      ],
+      "produced": [
+        114,
+        114
+      ],
+      "maxLive": 46
+    },
+    {
+      "mode": "sendIncome33",
+      "pair": "defense/defense",
+      "time": 300,
+      "finished": false,
+      "result": null,
+      "leaks": [
+        0,
+        0
+      ],
+      "towers": [
+        33,
+        33
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        0,
+        0
+      ],
+      "maxLive": 0
+    },
+    {
+      "mode": "ramp",
+      "pair": "defense/basic",
+      "time": 300,
+      "finished": false,
+      "result": null,
+      "leaks": [
+        19,
+        0
+      ],
+      "towers": [
+        33,
+        0
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        0,
+        920
+      ],
+      "maxLive": 54
+    },
+    {
+      "mode": "ramp",
+      "pair": "defense/heavy",
+      "time": 219.4,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 2
+      },
+      "leaks": [
+        20,
+        0
+      ],
+      "towers": [
+        33,
+        0
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        0,
+        215
+      ],
+      "maxLive": 43
+    },
+    {
+      "mode": "ramp",
+      "pair": "defense/balanced",
+      "time": 214.7,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 2
+      },
+      "leaks": [
+        20,
+        0
+      ],
+      "towers": [
+        33,
+        12
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        0,
+        455
+      ],
+      "maxLive": 38
+    },
+    {
+      "mode": "ramp",
+      "pair": "balanced/heavy",
+      "time": 76.8,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 1
+      },
+      "leaks": [
+        1,
+        22
+      ],
+      "towers": [
+        10,
+        6
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        153,
+        51
+      ],
+      "maxLive": 28
+    },
+    {
+      "mode": "ramp",
+      "pair": "balanced/balanced",
+      "time": 94.5,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": null
+      },
+      "leaks": [
+        22,
+        22
+      ],
+      "towers": [
+        7,
+        7
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        197,
+        197
+      ],
+      "maxLive": 42
+    },
+    {
+      "mode": "ramp",
+      "pair": "defense/defense",
+      "time": 300,
+      "finished": false,
+      "result": null,
+      "leaks": [
+        0,
+        0
+      ],
+      "towers": [
+        33,
+        33
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        0,
+        0
+      ],
+      "maxLive": 0
+    },
+    {
+      "mode": "income50Ramp",
+      "pair": "defense/basic",
+      "time": 227.7,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 2
+      },
+      "leaks": [
+        32,
+        0
+      ],
+      "towers": [
+        33,
+        0
+      ],
+      "income": [
+        30,
+        3188
+      ],
+      "produced": [
+        0,
+        15790
+      ],
+      "maxLive": 4411
+    },
+    {
+      "mode": "income50Ramp",
+      "pair": "defense/heavy",
+      "time": 55.9,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 2
+      },
+      "leaks": [
+        21,
+        0
+      ],
+      "towers": [
+        28,
+        0
+      ],
+      "income": [
+        30,
+        86
+      ],
+      "produced": [
+        0,
+        94
+      ],
+      "maxLive": 58
+    },
+    {
+      "mode": "income50Ramp",
+      "pair": "defense/balanced",
+      "time": 120.4,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 2
+      },
+      "leaks": [
+        21,
+        0
+      ],
+      "towers": [
+        33,
+        8
+      ],
+      "income": [
+        30,
+        157
+      ],
+      "produced": [
+        0,
+        261
+      ],
+      "maxLive": 106
+    },
+    {
+      "mode": "income50Ramp",
+      "pair": "balanced/heavy",
+      "time": 52.2,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 1
+      },
+      "leaks": [
+        1,
+        20
+      ],
+      "towers": [
+        11,
+        9
+      ],
+      "income": [
+        61,
+        59
+      ],
+      "produced": [
+        119,
+        49
+      ],
+      "maxLive": 27
+    },
+    {
+      "mode": "income50Ramp",
+      "pair": "balanced/balanced",
+      "time": 48.5,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": null
+      },
+      "leaks": [
+        22,
+        22
+      ],
+      "towers": [
+        8,
+        8
+      ],
+      "income": [
+        57,
+        57
+      ],
+      "produced": [
+        94,
+        94
+      ],
+      "maxLive": 36
+    },
+    {
+      "mode": "income50Ramp",
+      "pair": "defense/defense",
+      "time": 300,
+      "finished": false,
+      "result": null,
+      "leaks": [
+        0,
+        0
+      ],
+      "towers": [
+        33,
+        33
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        0,
+        0
+      ],
+      "maxLive": 0
+    }
+  ],
+  "withSplashLimit6": [
+    {
+      "mode": "baseline",
+      "pair": "defense/basic",
+      "time": 300,
+      "finished": false,
+      "result": null,
+      "leaks": [
+        15,
+        0
+      ],
+      "towers": [
+        33,
+        0
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        0,
+        920
+      ],
+      "maxLive": 24
+    },
+    {
+      "mode": "baseline",
+      "pair": "defense/heavy",
+      "time": 300,
+      "finished": false,
+      "result": null,
+      "leaks": [
+        0,
+        0
+      ],
+      "towers": [
+        33,
+        0
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        0,
+        285
+      ],
+      "maxLive": 19
+    },
+    {
+      "mode": "baseline",
+      "pair": "defense/balanced",
+      "time": 300,
+      "finished": false,
+      "result": null,
+      "leaks": [
+        3,
+        0
+      ],
+      "towers": [
+        33,
+        17
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        0,
+        617
+      ],
+      "maxLive": 11
+    },
+    {
+      "mode": "baseline",
+      "pair": "balanced/heavy",
+      "time": 152.1,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 1
+      },
+      "leaks": [
+        13,
+        21
+      ],
+      "towers": [
+        17,
+        10
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        285,
+        114
+      ],
+      "maxLive": 42
+    },
+    {
+      "mode": "baseline",
+      "pair": "balanced/balanced",
+      "time": 150.5,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": null
+      },
+      "leaks": [
+        20,
+        20
+      ],
+      "towers": [
+        10,
+        10
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        297,
+        297
+      ],
+      "maxLive": 46
+    },
+    {
+      "mode": "baseline",
+      "pair": "defense/defense",
+      "time": 300,
+      "finished": false,
+      "result": null,
+      "leaks": [
+        0,
+        0
+      ],
+      "towers": [
+        33,
+        33
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        0,
+        0
+      ],
+      "maxLive": 0
+    },
+    {
+      "mode": "sendIncome50",
+      "pair": "defense/basic",
+      "time": 113.5,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 2
+      },
+      "leaks": [
+        20,
+        0
+      ],
+      "towers": [
+        32,
+        0
+      ],
+      "income": [
+        30,
+        326
+      ],
+      "produced": [
+        0,
+        1478
+      ],
+      "maxLive": 342
+    },
+    {
+      "mode": "sendIncome50",
+      "pair": "defense/heavy",
+      "time": 55.9,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 2
+      },
+      "leaks": [
+        21,
+        0
+      ],
+      "towers": [
+        28,
+        0
+      ],
+      "income": [
+        30,
+        86
+      ],
+      "produced": [
+        0,
+        94
+      ],
+      "maxLive": 58
+    },
+    {
+      "mode": "sendIncome50",
+      "pair": "defense/balanced",
+      "time": 120.4,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 2
+      },
+      "leaks": [
+        21,
+        0
+      ],
+      "towers": [
+        33,
+        8
+      ],
+      "income": [
+        30,
+        157
+      ],
+      "produced": [
+        0,
+        261
+      ],
+      "maxLive": 103
+    },
+    {
+      "mode": "sendIncome50",
+      "pair": "balanced/heavy",
+      "time": 52.2,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 1
+      },
+      "leaks": [
+        1,
+        20
+      ],
+      "towers": [
+        11,
+        9
+      ],
+      "income": [
+        61,
+        59
+      ],
+      "produced": [
+        119,
+        49
+      ],
+      "maxLive": 27
+    },
+    {
+      "mode": "sendIncome50",
+      "pair": "balanced/balanced",
+      "time": 48.5,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": null
+      },
+      "leaks": [
+        22,
+        22
+      ],
+      "towers": [
+        8,
+        8
+      ],
+      "income": [
+        57,
+        57
+      ],
+      "produced": [
+        94,
+        94
+      ],
+      "maxLive": 36
+    },
+    {
+      "mode": "sendIncome50",
+      "pair": "defense/defense",
+      "time": 300,
+      "finished": false,
+      "result": null,
+      "leaks": [
+        0,
+        0
+      ],
+      "towers": [
+        33,
+        33
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        0,
+        0
+      ],
+      "maxLive": 0
+    },
+    {
+      "mode": "ramp",
+      "pair": "defense/basic",
+      "time": 300,
+      "finished": false,
+      "result": null,
+      "leaks": [
+        19,
+        0
+      ],
+      "towers": [
+        33,
+        0
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        0,
+        920
+      ],
+      "maxLive": 54
+    },
+    {
+      "mode": "ramp",
+      "pair": "defense/heavy",
+      "time": 219.4,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 2
+      },
+      "leaks": [
+        20,
+        0
+      ],
+      "towers": [
+        33,
+        0
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        0,
+        215
+      ],
+      "maxLive": 43
+    },
+    {
+      "mode": "ramp",
+      "pair": "defense/balanced",
+      "time": 214.7,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 2
+      },
+      "leaks": [
+        20,
+        0
+      ],
+      "towers": [
+        33,
+        12
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        0,
+        455
+      ],
+      "maxLive": 38
+    },
+    {
+      "mode": "ramp",
+      "pair": "balanced/heavy",
+      "time": 76.8,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 1
+      },
+      "leaks": [
+        1,
+        22
+      ],
+      "towers": [
+        10,
+        6
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        153,
+        51
+      ],
+      "maxLive": 28
+    },
+    {
+      "mode": "ramp",
+      "pair": "balanced/balanced",
+      "time": 94.5,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": null
+      },
+      "leaks": [
+        22,
+        22
+      ],
+      "towers": [
+        7,
+        7
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        197,
+        197
+      ],
+      "maxLive": 42
+    },
+    {
+      "mode": "ramp",
+      "pair": "defense/defense",
+      "time": 300,
+      "finished": false,
+      "result": null,
+      "leaks": [
+        0,
+        0
+      ],
+      "towers": [
+        33,
+        33
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        0,
+        0
+      ],
+      "maxLive": 0
+    },
+    {
+      "mode": "income50Ramp",
+      "pair": "defense/basic",
+      "time": 112.4,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 2
+      },
+      "leaks": [
+        20,
+        0
+      ],
+      "towers": [
+        32,
+        0
+      ],
+      "income": [
+        30,
+        318
+      ],
+      "produced": [
+        0,
+        1442
+      ],
+      "maxLive": 361
+    },
+    {
+      "mode": "income50Ramp",
+      "pair": "defense/heavy",
+      "time": 55.9,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 2
+      },
+      "leaks": [
+        21,
+        0
+      ],
+      "towers": [
+        28,
+        0
+      ],
+      "income": [
+        30,
+        86
+      ],
+      "produced": [
+        0,
+        94
+      ],
+      "maxLive": 58
+    },
+    {
+      "mode": "income50Ramp",
+      "pair": "defense/balanced",
+      "time": 120.4,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 2
+      },
+      "leaks": [
+        21,
+        0
+      ],
+      "towers": [
+        33,
+        8
+      ],
+      "income": [
+        30,
+        157
+      ],
+      "produced": [
+        0,
+        261
+      ],
+      "maxLive": 106
+    },
+    {
+      "mode": "income50Ramp",
+      "pair": "balanced/heavy",
+      "time": 52.2,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 1
+      },
+      "leaks": [
+        1,
+        20
+      ],
+      "towers": [
+        11,
+        9
+      ],
+      "income": [
+        61,
+        59
+      ],
+      "produced": [
+        119,
+        49
+      ],
+      "maxLive": 27
+    },
+    {
+      "mode": "income50Ramp",
+      "pair": "balanced/balanced",
+      "time": 48.5,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": null
+      },
+      "leaks": [
+        22,
+        22
+      ],
+      "towers": [
+        8,
+        8
+      ],
+      "income": [
+        57,
+        57
+      ],
+      "produced": [
+        94,
+        94
+      ],
+      "maxLive": 36
+    },
+    {
+      "mode": "income50Ramp",
+      "pair": "defense/defense",
+      "time": 300,
+      "finished": false,
+      "result": null,
+      "leaks": [
+        0,
+        0
+      ],
+      "towers": [
+        33,
+        33
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        0,
+        0
+      ],
+      "maxLive": 0
+    }
+  ],
+  "withSplashLimit6AndIncomeCap90": [
+    {
+      "mode": "supportOnly",
+      "pair": "defense/basic",
+      "time": 300,
+      "finished": false,
+      "result": null,
+      "leaks": [
+        15,
+        0
+      ],
+      "towers": [
+        33,
+        0
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        0,
+        920
+      ],
+      "maxLive": 25
+    },
+    {
+      "mode": "supportOnly",
+      "pair": "defense/heavy",
+      "time": 300,
+      "finished": false,
+      "result": null,
+      "leaks": [
+        1,
+        0
+      ],
+      "towers": [
+        33,
+        0
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        0,
+        295
+      ],
+      "maxLive": 26
+    },
+    {
+      "mode": "supportOnly",
+      "pair": "defense/balanced",
+      "time": 300,
+      "finished": false,
+      "result": null,
+      "leaks": [
+        4,
+        0
+      ],
+      "towers": [
+        33,
+        17
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        0,
+        649
+      ],
+      "maxLive": 14
+    },
+    {
+      "mode": "supportOnly",
+      "pair": "balanced/heavy",
+      "time": 76.8,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 1
+      },
+      "leaks": [
+        1,
+        22
+      ],
+      "towers": [
+        10,
+        6
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        153,
+        51
+      ],
+      "maxLive": 28
+    },
+    {
+      "mode": "supportOnly",
+      "pair": "balanced/balanced",
+      "time": 94.5,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": null
+      },
+      "leaks": [
+        22,
+        22
+      ],
+      "towers": [
+        7,
+        7
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        197,
+        197
+      ],
+      "maxLive": 42
+    },
+    {
+      "mode": "supportOnly",
+      "pair": "defense/defense",
+      "time": 300,
+      "finished": false,
+      "result": null,
+      "leaks": [
+        0,
+        0
+      ],
+      "towers": [
+        33,
+        33
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        0,
+        0
+      ],
+      "maxLive": 0
+    },
+    {
+      "mode": "incomeCap90",
+      "pair": "defense/basic",
+      "time": 300,
+      "finished": false,
+      "result": null,
+      "leaks": [
+        16,
+        0
+      ],
+      "towers": [
+        32,
+        0
+      ],
+      "income": [
+        30,
+        90
+      ],
+      "produced": [
+        0,
+        2559
+      ],
+      "maxLive": 56
+    },
+    {
+      "mode": "incomeCap90",
+      "pair": "defense/heavy",
+      "time": 55.9,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 2
+      },
+      "leaks": [
+        21,
+        0
+      ],
+      "towers": [
+        28,
+        0
+      ],
+      "income": [
+        30,
+        86
+      ],
+      "produced": [
+        0,
+        94
+      ],
+      "maxLive": 58
+    },
+    {
+      "mode": "incomeCap90",
+      "pair": "defense/balanced",
+      "time": 120.4,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 2
+      },
+      "leaks": [
+        21,
+        0
+      ],
+      "towers": [
+        33,
+        8
+      ],
+      "income": [
+        30,
+        90
+      ],
+      "produced": [
+        0,
+        234
+      ],
+      "maxLive": 77
+    },
+    {
+      "mode": "incomeCap90",
+      "pair": "balanced/heavy",
+      "time": 52.2,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 1
+      },
+      "leaks": [
+        1,
+        20
+      ],
+      "towers": [
+        11,
+        9
+      ],
+      "income": [
+        61,
+        59
+      ],
+      "produced": [
+        119,
+        49
+      ],
+      "maxLive": 27
+    },
+    {
+      "mode": "incomeCap90",
+      "pair": "balanced/balanced",
+      "time": 48.5,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": null
+      },
+      "leaks": [
+        22,
+        22
+      ],
+      "towers": [
+        8,
+        8
+      ],
+      "income": [
+        57,
+        57
+      ],
+      "produced": [
+        94,
+        94
+      ],
+      "maxLive": 36
+    },
+    {
+      "mode": "incomeCap90",
+      "pair": "defense/defense",
+      "time": 300,
+      "finished": false,
+      "result": null,
+      "leaks": [
+        0,
+        0
+      ],
+      "towers": [
+        33,
+        33
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        0,
+        0
+      ],
+      "maxLive": 0
+    },
+    {
+      "mode": "incomeCap90Ramp",
+      "pair": "defense/basic",
+      "time": 169.4,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 2
+      },
+      "leaks": [
+        20,
+        0
+      ],
+      "towers": [
+        32,
+        0
+      ],
+      "income": [
+        30,
+        90
+      ],
+      "produced": [
+        0,
+        1381
+      ],
+      "maxLive": 112
+    },
+    {
+      "mode": "incomeCap90Ramp",
+      "pair": "defense/heavy",
+      "time": 55.9,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 2
+      },
+      "leaks": [
+        21,
+        0
+      ],
+      "towers": [
+        28,
+        0
+      ],
+      "income": [
+        30,
+        86
+      ],
+      "produced": [
+        0,
+        94
+      ],
+      "maxLive": 58
+    },
+    {
+      "mode": "incomeCap90Ramp",
+      "pair": "defense/balanced",
+      "time": 120.4,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 2
+      },
+      "leaks": [
+        21,
+        0
+      ],
+      "towers": [
+        33,
+        8
+      ],
+      "income": [
+        30,
+        90
+      ],
+      "produced": [
+        0,
+        234
+      ],
+      "maxLive": 79
+    },
+    {
+      "mode": "incomeCap90Ramp",
+      "pair": "balanced/heavy",
+      "time": 52.2,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": 1
+      },
+      "leaks": [
+        1,
+        20
+      ],
+      "towers": [
+        11,
+        9
+      ],
+      "income": [
+        61,
+        59
+      ],
+      "produced": [
+        119,
+        49
+      ],
+      "maxLive": 27
+    },
+    {
+      "mode": "incomeCap90Ramp",
+      "pair": "balanced/balanced",
+      "time": 48.5,
+      "finished": true,
+      "result": {
+        "reason": "leak-limit",
+        "winnerId": null
+      },
+      "leaks": [
+        22,
+        22
+      ],
+      "towers": [
+        8,
+        8
+      ],
+      "income": [
+        57,
+        57
+      ],
+      "produced": [
+        94,
+        94
+      ],
+      "maxLive": 36
+    },
+    {
+      "mode": "incomeCap90Ramp",
+      "pair": "defense/defense",
+      "time": 300,
+      "finished": false,
+      "result": null,
+      "leaks": [
+        0,
+        0
+      ],
+      "towers": [
+        33,
+        33
+      ],
+      "income": [
+        30,
+        30
+      ],
+      "produced": [
+        0,
+        0
+      ],
+      "maxLive": 0
+    }
+  ]
+}

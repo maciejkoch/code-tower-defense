@@ -36,8 +36,8 @@ export function drawUnits(
     }
   }
   for (const mob of mobs) {
-    const x = padding + (mob.x + 0.5) * size;
-    const y = padding + (mob.y + 0.5) * size;
+    const x = padding + (mob.x + 0.5) * size + ((mob.id % 7) - 3) * 2;
+    const y = padding + (mob.y + 0.5) * size + (((mob.id * 3) % 7) - 3) * 1.2;
     if (mob.type === 'heavy') graphics.rect(x - 9, y - 9, 18, 18);
     else graphics.circle(x, y, size * 0.22);
     graphics.fill(look.players[mob.ownerId]).stroke({ color: look.background, width: 2 });

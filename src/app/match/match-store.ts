@@ -1,4 +1,7 @@
 import { computed, DestroyRef, inject, InjectionToken, Service, signal } from '@angular/core';
+import { GAME_CONFIG } from '../../game/config/game-config';
+import { DEFAULT_STRATEGIES } from '../../game/strategy/default-strategies';
+import type { StrategyPair } from '../../game/strategy/contracts';
 import { MatchSession } from '../../game/runtime/match-session';
 import { Playback, PLAYBACK_SPEEDS, type PlaybackSpeed } from '../../game/runtime/playback';
 
@@ -14,9 +17,15 @@ export const FRAME_SCHEDULER = new InjectionToken<FrameScheduler>('Animation fra
   }),
 });
 
+export const STRATEGY_PAIR = new InjectionToken<StrategyPair>('Player strategies', {
+  providedIn: 'root',
+  factory: () => DEFAULT_STRATEGIES,
+});
+
 @Service()
 export class MatchStore {
-  private readonly session = new MatchSession();
+  readonly strategies = inject(STRATEGY_PAIR);
+  private readonly session = new MatchSession(GAME_CONFIG, this.strategies);
   private readonly playback = new Playback(this.session.state.config.simulation.stepSeconds * 1000);
   private readonly scheduler = inject(FRAME_SCHEDULER);
   private readonly currentMatch = signal(this.session.state);
@@ -36,6 +45,8 @@ export class MatchStore {
   readonly resultLabel = computed(() => {
     const result = this.state().result;
     if (!result) return '';
+    if (result.reason === 'strategy-error')
+      return `Błąd strategii gracza ${result.playerId} — bez zwycięzcy`;
     if (result.reason === 'interrupted') return 'Mecz przerwany — bez zwycięzcy';
     return result.winnerId === null ? 'Remis' : `Wygrywa gracz ${result.winnerId}`;
   });

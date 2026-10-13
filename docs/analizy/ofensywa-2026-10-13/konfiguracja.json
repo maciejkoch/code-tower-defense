@@ -1,0 +1,80 @@
+{
+  "board": {
+    "width": 16,
+    "height": 12,
+    "entry": {
+      "x": 0,
+      "y": 6
+    },
+    "base": {
+      "x": 15,
+      "y": 6
+    },
+    "directionPriority": [
+      "right",
+      "down",
+      "left",
+      "up"
+    ]
+  },
+  "simulation": {
+    "stepSeconds": 0.1
+  },
+  "economy": {
+    "startingGold": 200,
+    "goldPerSecond": 30,
+    "sellRefundRatio": 0.5
+  },
+  "match": {
+    "leakLimit": 20
+  },
+  "towers": {
+    "basic": {
+      "cost": 50,
+      "damage": 15,
+      "attackInterval": 0.5,
+      "range": 3
+    },
+    "splash": {
+      "cost": 100,
+      "damage": 8,
+      "attackInterval": 1,
+      "range": 3,
+      "splashRadius": 1.5
+    }
+  },
+  "mobs": {
+    "basic": {
+      "cost": 10,
+      "hp": 40,
+      "speed": 2,
+      "reward": 2
+    },
+    "heavy": {
+      "cost": 30,
+      "hp": 150,
+      "speed": 1,
+      "reward": 5
+    }
+  },
+  "upgrades": {
+    "towerDamageMultipliers": [
+      1,
+      1.5,
+      2
+    ],
+    "towerCostMultipliers": [
+      1,
+      1.5
+    ],
+    "mobHealthMultipliers": [
+      1,
+      2,
+      6
+    ],
+    "mobCosts": [
+      200,
+      400
+    ]
+  }
+}

@@ -42,6 +42,8 @@ import { MatchStore } from '../match/match-store';
             >Osiągnięto próg {{ match.state().config.match.leakLimit }} przepuszczeń. Czas:
             {{ match.time() | number: '1.1-1' }} s.</span
           >
+        } @else if (result.reason === 'strategy-error') {
+          <span>{{ result.message }}</span>
         } @else {
           <span>Rozgrywka została zatrzymana przez użytkownika.</span>
         }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { GAME_CONFIG } from '../config/game-config';
+import { BASELINE_CONFIG as GAME_CONFIG } from '../balance/profiles';
 import { buildTower, sellTower, spawnMob } from './actions';
 import { createMatch } from './create-match';
 import { addIncome } from './economy';
@@ -14,14 +14,14 @@ function withGold(gold: number): MatchState {
 }
 
 function runningMob(): MatchState {
-  let state: MatchState = { ...spawnMob(createMatch(), 2, 'basic').state, status: 'running' };
+  let state: MatchState = { ...spawnMob(createMatch(GAME_CONFIG), 2, 'basic').state, status: 'running' };
   for (let i = 0; i < 6; i++) state = stepMatch(state);
   return state;
 }
 
 describe('economic actions', () => {
   it('charges each action immediately, returns IDs and accepts only affordable purchases', () => {
-    const initial = createMatch();
+    const initial = createMatch(GAME_CONFIG);
     const first = buildTower(initial, 1, 'basic', 4, 6);
     expect(first.result).toEqual({ ok: true, towerId: 1 });
     const second = buildTower(first.state, 1, 'splash', 8, 6);
@@ -38,7 +38,7 @@ describe('economic actions', () => {
   });
 
   it('places both types on the opposite field and snapshots their stats', () => {
-    const basic = spawnMob(createMatch(), 1, 'basic').state;
+    const basic = spawnMob(createMatch(GAME_CONFIG), 1, 'basic').state;
     const state = spawnMob(basic, 2, 'heavy').state;
     expect(state.players[1].mobs[0]).toMatchObject({
       ownerId: 1,
@@ -62,7 +62,7 @@ describe('economic actions', () => {
   });
 
   it('starts at 200, omits income at tick 0 and pays before subsequent actions', () => {
-    const initial = createMatch();
+    const initial = createMatch(GAME_CONFIG);
     expect(addIncome(initial)).toBe(initial);
     let state: MatchState = { ...initial, status: 'running' };
     for (let i = 0; i < 10; i++) state = stepMatch(state);
@@ -75,7 +75,7 @@ describe('economic actions', () => {
   });
 
   it('refunds 50% of actual total spending, including fractional gold', () => {
-    const state = buildTower(createMatch(), 1, 'basic', 4, 6).state;
+    const state = buildTower(createMatch(GAME_CONFIG), 1, 'basic', 4, 6).state;
     const upgradedFixture = {
       ...state,
       players: [
@@ -108,7 +108,7 @@ describe('economic actions', () => {
     ['basic', 0, 6, 'RESERVED_CELL'],
     ['basic', 15, 6, 'RESERVED_CELL'],
   ] as const)('rejects build(%s, %s, %s) as %s without mutation', (type, x, y, error) => {
-    const state = createMatch();
+    const state = createMatch(GAME_CONFIG);
     const action = buildTower(state, 1, type, x, y);
     expect(action.result).toEqual({ ok: false, error });
     expect(action.state).toBe(state);
@@ -125,7 +125,7 @@ describe('economic actions', () => {
       expect(action.result.ok).toBe(false);
       expect(action.state).toBe(state);
     }
-    const built = buildTower(createMatch(), 1, 'basic', 4, 6).state;
+    const built = buildTower(createMatch(GAME_CONFIG), 1, 'basic', 4, 6).state;
     expect(buildTower(built, 1, 'basic', 4, 6).result).toEqual({
       ok: false,
       error: 'CELL_OCCUPIED',
@@ -200,7 +200,7 @@ describe('legal maze changes', () => {
   });
 
   it('does not charge for illegal actions and allows the next legal action in the same step', () => {
-    const state = createMatch();
+    const state = createMatch(GAME_CONFIG);
     const failed = buildTower(state, 1, 'basic', 0, 6);
     const legal = buildTower(failed.state, 1, 'basic', 4, 6);
     expect(legal.result.ok).toBe(true);

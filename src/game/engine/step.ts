@@ -1,8 +1,9 @@
 import type { MatchState, PlayerState } from './model';
 import { moveMob } from './movement';
-import { resolveCombat } from './combat';
+import { advanceCooldowns, resolveCombat } from './combat';
 import { addIncome } from './economy';
 import { getOutcome } from './outcome';
+import { advanceSpawnQueues } from './spawning';
 import { createDistanceField, sameCell } from './pathfinding';
 
 /** No clocks, rendering or demo rules here. Each call advances exactly one fixed step. */
@@ -11,6 +12,7 @@ export function stepMatch(
   resolveActions: (state: MatchState) => MatchState = (state) => state,
 ): MatchState {
   if (state.status !== 'running') return state;
+  state = advanceCooldowns(state, state.config.simulation.stepSeconds);
   const advancePlayer = (player: PlayerState): PlayerState => {
     const field = createDistanceField(player.board, player.towers);
     const moved = player.mobs.map((mob) =>
@@ -36,7 +38,5 @@ export function stepMatch(
   };
   // Tick 0 is prepared at Start. Finish its movement interval, then prepare
   // the next tick: income and actions precede that tick's next movement.
-  return result
-    ? next
-    : resolveCombat(resolveActions(addIncome(next)), next.config.simulation.stepSeconds);
+  return result ? next : resolveCombat(resolveActions(addIncome(advanceSpawnQueues(next))), 0);
 }

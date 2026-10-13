@@ -1,4 +1,5 @@
 import { Application, Graphics, Text } from 'pixi.js';
+import { createDistanceField, nextCell, sameCell } from '../engine/pathfinding';
 import type { BoardConfig } from '../config/game-config';
 import type { MobState, PlayerId, TowerState } from '../engine/model';
 import type { AttackEvent } from '../engine/events';
@@ -13,6 +14,9 @@ export class BoardRenderer {
   private readonly app = new Application();
   private initialized = false;
   private disposed = false;
+  private readonly route = new Graphics();
+  private board: BoardConfig | undefined;
+  private routeLayout: string | null = null;
   private readonly units = new Graphics();
   private readonly effects = new Graphics();
   private playerId: PlayerId = 1;
@@ -22,6 +26,7 @@ export class BoardRenderer {
 
   async mount(host: HTMLElement, board: BoardConfig, playerId: PlayerId): Promise<void> {
     this.playerId = playerId;
+    this.board = board;
     const { cellSize: size, padding } = look;
     await this.app.init({
       width: board.width * size + padding * 2,
@@ -57,6 +62,7 @@ export class BoardRenderer {
       }
     }
     this.app.stage.addChild(grid);
+    this.app.stage.addChild(this.route);
 
     for (let x = 0; x < board.width; x++) {
       this.label(String(x), padding + (x + 0.5) * size, padding / 2);
@@ -114,12 +120,32 @@ export class BoardRenderer {
     attacks: readonly AttackEvent[],
   ): void {
     if (!this.initialized || this.disposed) return;
+    this.drawRoute(towers);
     drawUnits(this.units, mobs, towers, this.playerId);
     this.animation.receive(attacks.filter((attack) => attack.playerId === this.playerId));
     this.animation.trackTargets(mobs);
     drawEffects(this.effects, this.animation.projectiles, this.playerId);
     this.updateTicker();
     this.app.render();
+  }
+
+  private drawRoute(towers: readonly TowerState[]): void {
+    if (!this.board) return;
+    const layout = towers.map((tower) => `${tower.x},${tower.y}`).join(';');
+    if (layout === this.routeLayout) return;
+    this.routeLayout = layout;
+    const board = this.board;
+    const field = createDistanceField(board, towers);
+    const position = (value: number) => look.padding + (value + 0.5) * look.cellSize;
+    this.route.clear().moveTo(position(board.entry.x), position(board.entry.y));
+    let cell = board.entry;
+    for (let i = 0; i < board.width * board.height && !sameCell(cell, board.base); i++) {
+      const next = nextCell(board, field, cell);
+      if (!next) break;
+      this.route.lineTo(position(next.x), position(next.y));
+      cell = next;
+    }
+    this.route.stroke({ color: look.coordinates, width: 1.5, alpha: 0.7 });
   }
 
   setPlayback(running: boolean, speed: PlaybackSpeed): void {

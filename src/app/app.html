@@ -11,7 +11,7 @@
       <div>
         <p class="eyebrow">ARENA / 01</p>
         <h1 id="arena-title">Pole gry</h1>
-        <p class="intro">Walka wież. Fale mobów. Ulepszenia.</p>
+        <p class="intro">Fale jednostek kontra rosnące labirynty.</p>
       </div>
       <div class="match-state">
         <span class="status"
@@ -34,7 +34,7 @@
               <span class="player-number" aria-hidden="true">0{{ player.id }}</span>
               <div>
                 <h2 [id]="'player-' + player.id">Gracz {{ player.id }}</h2>
-                <p>POLE OBRONY</p>
+                <p>{{ match.strategies[player.id - 1].name }}</p>
               </div>
             </div>
             <span class="board-dimensions"
@@ -54,7 +54,7 @@
             </div>
             <div>
               <dt>Przychód</dt>
-              <dd>+{{ match.state().config.economy.goldPerSecond }} <span>G/s</span></dd>
+              <dd>+{{ player.income | number: '1.0-1' }} <span>G/s</span></dd>
             </div>
           </dl>
           <app-board
@@ -67,6 +67,10 @@
             [speed]="match.speed()"
           />
           <div class="board-legend">
+            <span
+              >Moby: {{ player.mobs.length }} · W kolejce: {{ player.queuedMobs.length }} · Wieże:
+              {{ player.towers.length }}</span
+            >
             <span
               ><span class="entry-icon" aria-hidden="true">→</span> Wejście
               <span class="coordinates"
@@ -94,13 +98,13 @@
       }
     </div>
     <aside class="phase-note" aria-label="Stan implementacji">
-      <span class="phase-badge">FAZA 04</span>
+      <span class="phase-badge">BALANS B2</span>
       <div>
-        <h2>Demonstracja walki i ulepszeń</h2>
+        <h2>Więcej jednostek, dłuższe trasy</h2>
         <p>
-          Wieże strzelają i otrzymują trzy poziomy ulepszeń. Produkcja ciężkich mobów rośnie w
-          {{ upgradeTimes }} s. W {{ demo.releaseSeconds }} s sprzedaż obrony otwiera drogę do
-          zakończenia meczu.
+          Strategie budują ściany z naprzemiennymi przejściami i przeznaczają 60% przychodu na atak.
+          Produkcja zwiększa przychód do 90 G/s. Wybuch trafia do sześciu mobów. Moby wchodzą co 0,2
+          s, jeden za drugim. Linia na planszy pokazuje aktualną najkrótszą drogę.
         </p>
       </div>
     </aside>

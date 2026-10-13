@@ -10,6 +10,8 @@ describe('createMatch', () => {
     expect(match.players.map((player) => player.id)).toEqual([1, 2]);
     for (const player of match.players) {
       expect(player.gold).toBe(200);
+      expect(player.income).toBe(30);
+      expect(player.queuedMobs).toEqual([]);
       expect(player.leaks).toBe(0);
       expect(player.mobLevels).toEqual({ basic: 1, heavy: 1 });
       expect(player.board).toMatchObject({

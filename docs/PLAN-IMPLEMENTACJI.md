@@ -1,6 +1,6 @@
 # Plan implementacji MVP.0
 
-Aktualizacja: 2026-10-13. Status: faza 1 zaakceptowana i wypchnięta w commicie 2c4449f; faza 2 zaakceptowana i wypchnięta w commicie 53642f8; faza 3 zaakceptowana i wypchnięta w commicie 0a8eefc; faza 4 zaimplementowana, oczekuje na odbiór.
+Aktualizacja: 2026-10-13. Status: faza 1 zaakceptowana i wypchnięta w commicie 2c4449f; faza 2 zaakceptowana i wypchnięta w commicie 53642f8; faza 3 zaakceptowana i wypchnięta w commicie 0a8eefc; faza 4 zaakceptowana i wypchnięta w commicie 453dbae; faza 5 zaimplementowana, oczekuje na odbiór.
 
 Punktem wyjścia są WYMAGANIA-MVP.md, API-STRATEGII.md, STACK-I-INFRA.md i ODBIOR-MVP.md. Faza 1 dostarczyła uruchamialny szkielet aplikacji. Plan nie zmienia zatwierdzonego zakresu gry.
 
@@ -53,6 +53,10 @@ Widoczny efekt: Start uruchamia pełny mecz dwóch skryptów; widać ich decyzje
 
 Odbiór: przykładowy mecz kończy się wynikiem. Obserwacje nie pozwalają zmieniać silnika, pamięć jest oddzielna, pauza ją zachowuje, a nowy mecz resetuje stan i logi. Wyjątek wskazuje gracza i kończy mecz bez zwycięzcy. Testy integracyjne potwierdzają powtarzalność meczu dla wszystkich prędkości. Do przeglądu: adapter strategii, migawki, przykłady i integracja z UI.
 
+## Korekta balansu po fazie 5 — B2
+
+Na prośbę użytkownika: strategie budują ściany wydłużające trasę i przeznaczają 60% przychodu na atak. Parametry zebrano w GAME_CONFIG. Produkcja daje trwały bonus +0,2/+0,6 G/s z limitem 90 G/s łącznie, wybuch trafia najwyżej sześć mobów, nagrody wynoszą 1/3 G, a ulepszenia mobów 100/200 G. Moby z fali wchodzą z osobnej kolejki co 0,2 s. Zakup oraz bonus przychodu są natychmiastowe. Pauza i reset obejmują kolejkę. Raport i dane: BALANS-B2.md i BALANS-B2-WYNIKI.json.
+
 ## Faza 6 — odbiór całego MVP.0 i przygotowanie publikacji
 
 Zakres: przejście wszystkich lokalnych scenariuszy ODBIOR-MVP.md, poprawki wykrytych błędów i czytelności, sprawdzenie w Chrome i Firefox, ocena grywalności przykładowych strategii. Uzupełnienie instrukcji, CI dla typów/testów/buildu i workflow publikacji uruchamianego wyłącznie ręcznie.
@@ -71,4 +75,4 @@ Odbiór: wdrożona aplikacja przechodzi scenariusz 23 z ODBIOR-MVP.md, a push sa
 
 ## Najbliższy krok
 
-Odbiór fazy 4 według README.md i ODBIOR-FAZY-4.md. Faza 5 pozostaje nierozpoczęta. Każda kolejna faza wymaga zakończenia odbioru poprzedniej.
+Odbiór fazy 5 według README.md i ODBIOR-FAZY-5.md. Faza 6 pozostaje nierozpoczęta. Każda kolejna faza wymaga zakończenia odbioru poprzedniej.

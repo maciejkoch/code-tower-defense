@@ -3,7 +3,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { App } from './app';
 import { LOAD_BOARD_RENDERER } from './board/board';
 import { run } from 'axe-core';
-import { FRAME_SCHEDULER, MatchStore, type FrameScheduler } from './match/match-store';
+import {
+  FRAME_SCHEDULER,
+  STRATEGY_PAIR,
+  MatchStore,
+  type FrameScheduler,
+} from './match/match-store';
+import type { StrategyPair } from '../game/strategy/contracts';
 
 const renderer = { mount: vi.fn(), drawUnits: vi.fn(), setPlayback: vi.fn(), destroy: vi.fn() };
 const frames = new Map<number, (time: number) => void>();
@@ -26,6 +32,43 @@ function advanceFrame(time: number): void {
 }
 
 describe('Arena', () => {
+  it('identifies strategy errors, escapes their message and cancels playback', async () => {
+    const broken: StrategyPair = [
+      { name: 'First', onTick: () => undefined },
+      {
+        name: 'Second',
+        onTick: (state) => {
+          if (state.tick === 2) throw new Error('<script>alert(1)</script>');
+        },
+      },
+    ];
+    TestBed.overrideProvider(STRATEGY_PAIR, { useValue: broken });
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const store = fixture.debugElement.injector.get(MatchStore);
+    store.start();
+    advanceFrame(0);
+    advanceFrame(500);
+    await fixture.whenStable();
+    const page: HTMLElement = fixture.nativeElement;
+    expect(page.querySelector('[role="status"]')?.textContent).toContain('Błąd strategii gracza 2');
+    expect(page.querySelector('[role="status"]')?.textContent).toContain(
+      '<script>alert(1)</script>',
+    );
+    expect(page.querySelector('script')).toBeNull();
+    expect(store.state().result).toMatchObject({
+      reason: 'strategy-error',
+      winnerId: null,
+      playerId: 2,
+    });
+    expect(store.state().tick).toBe(2);
+    expect(frames.size).toBe(0);
+    store.reset();
+    await fixture.whenStable();
+    expect(store.state().result).toBeNull();
+    expect(store.state().players[1].logs).toEqual([]);
+    expect(page.querySelector('[role="status"]')).toBeNull();
+  });
   beforeEach(async () => {
     vi.clearAllMocks();
     frames.clear();
@@ -48,7 +91,7 @@ describe('Arena', () => {
     expect(page.querySelector('#player-1')?.textContent).toBe('Gracz 1');
     expect(page.querySelector('#player-2')?.textContent).toBe('Gracz 2');
     expect(page.querySelector('[role="img"]')?.getAttribute('aria-label')).toContain('16 na 12');
-    expect(page.textContent).toContain('Demonstracja walki i ulepszeń');
+    expect(page.textContent).toContain('Więcej jednostek, dłuższe trasy');
     expect(page.querySelector('[role="alert"]')).toBeNull();
     fixture.destroy();
     expect(renderer.destroy).toHaveBeenCalledTimes(2);
@@ -97,7 +140,9 @@ describe('Arena', () => {
     advanceFrame(300);
     await fixture.whenStable();
     expect(store.state().tick).toBe(3);
-    expect(store.state().players[0].mobs[0].x).toBeCloseTo(0.6);
+    expect(store.state().players[0].mobs[0].x).toBeCloseTo(0.3);
+    expect(page.querySelector('.stats')?.textContent).toContain('+32');
+    expect(page.textContent).toContain('W kolejce:');
     expect(renderer.drawUnits).toHaveBeenCalledWith(
       store.state().players[0].mobs,
       store.state().players[0].towers,
@@ -135,7 +180,7 @@ describe('Arena', () => {
     expect(frames.size).toBe(0);
   });
 
-  it('shows the default draw and stops scheduling frames after completion', async () => {
+  it('shows the result of the default strategies and stops scheduling frames', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const store = fixture.debugElement.injector.get(MatchStore);
@@ -145,8 +190,8 @@ describe('Arena', () => {
     for (let i = 1; i <= 40 && store.state().status === 'running'; i++) advanceFrame(i * 2500);
     await fixture.whenStable();
     const page: HTMLElement = fixture.nativeElement;
-    expect(page.querySelector('[role="status"]')?.textContent).toContain('Remis');
-    expect(page.querySelector('[role="status"]')?.textContent).toContain('185.5');
+    expect(page.querySelector('[role="status"]')?.textContent).toContain('Wygrywa gracz 1');
+    expect(page.querySelector('[role="status"]')?.textContent).toContain('32.2');
     expect(frames.size).toBe(0);
     expect(page.querySelector<HTMLButtonElement>('.primary')?.disabled).toBe(true);
     const result = await run(page, {

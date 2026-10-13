@@ -1,6 +1,6 @@
 # Programowalne Tower Defense — wymagania MVP
 
-Status: wymagania funkcjonalne MVP.0 zatwierdzone; szczegóły kontraktu API opisane w API-STRATEGII.md. Ostatnia aktualizacja: 2026-10-12.
+Status: wymagania funkcjonalne MVP.0 zatwierdzone; szczegóły kontraktu API opisane w API-STRATEGII.md. Ostatnia aktualizacja: 2026-10-13 (balans B2 i kolejka wypuszczania).
 Dokument jest źródłem ustaleń. Propozycje nie są zatwierdzonymi wymaganiami.
 
 ## Cel i etapy
@@ -47,9 +47,9 @@ Kolejność prac: wymagania → stack technologiczny i infrastruktura → implem
 
 - Jeden zasób: złoto, wspólne dla budowy, produkcji i ulepszeń.
 - Każdy gracz zaczyna z 200 złota.
-- Stały przychód wynosi 10 złota na sekundę czasu symulacji.
+- Bazowy przychód wynosi 30 złota na sekundę czasu symulacji. Każdy zakup podstawowego moba daje trwałe +0,2 G/s, ciężkiego +0,6 G/s. Łączny przychód jest ograniczony do 90 G/s; bonus nie znika po śmierci ani przepuszczeniu jednostki.
 - Zabicie moba daje obrońcy nagrodę zależną od typu moba. Dotarcie moba do bazy nie daje nagrody.
-- Zakupiony mob pojawia się natychmiast na wejściu pola przeciwnika; brak kolejki produkcji. Każda sztuka kosztuje złoto.
+- Zakup mobów rozlicza złoto i bonus przychodu natychmiast. Jednostki wchodzą pojedynczo z kolejki FIFO: pierwsza od razu, następne co 0,2 s czasu symulacji. Kolejka jest osobna dla każdego gracza, zatrzymuje się przy pauzie i resetuje przy nowym meczu. Statystyki są ustalone przy zakupie. Oczekujące moby nie poruszają się i nie mogą zostać trafione.
 - Budowa i ulepszenia działają natychmiast.
 - Nieudana akcja nie pobiera zasobów i zwraca strategii przyczynę błędu, np. brak złota lub niedozwolone miejsce.
 - Sprzedaż wieży zwraca 50% złota wydanego na wieżę i jej ulepszenia, umożliwiając przebudowę labiryntu.
@@ -74,27 +74,27 @@ Kolejność prac: wymagania → stack technologiczny i infrastruktura → implem
 - Mob ciężki: wyższa cena i zdrowie, mniejsza szybkość.
 - Wieża spowalniająca i mob szybki pozostają kandydatami na późniejsze rozszerzenie.
 
-## Początkowe parametry jednostek — zatwierdzone
+## Aktualne parametry jednostek — balans B2
 
 Parametry są punktem wyjścia do testów i znajdują się w centralnej konfiguracji.
 
-| Wieża | Koszt złota | Obrażenia | Odstęp ataków | Zasięg |
-|---|---:|---:|---:|---:|
-| Podstawowa | 50 | 10 | 0,5 s | 3 pola |
-| Obszarowa | 100 | 8 na moba | 1 s | 3 pola |
+| Wieża      | Koszt złota | Obrażenia | Odstęp ataków | Zasięg |
+| ---------- | ----------: | --------: | ------------: | -----: |
+| Podstawowa |          50 |        15 |         0,5 s | 3 pola |
+| Obszarowa  |         100 | 8 na moba |           1 s | 3 pola |
 
-- Wieża obszarowa trafia wszystkie moby w promieniu 1,5 pola od celu.
+- Wieża obszarowa trafia najwyżej sześć mobów w promieniu 1,5 pola: cel główny i najbliższe pozostałe; remis rozstrzyga niższe ID.
 - Trafienia są natychmiastowe; ewentualna animacja pocisku jest wyłącznie wizualna.
 
-| Mob | Koszt złota | Zdrowie | Szybkość | Nagroda za zabicie |
-|---|---:|---:|---:|---:|
-| Podstawowy | 20 | 40 | 2 pola/s | 5 złota |
-| Ciężki | 50 | 150 | 1 pole/s | 12 złota |
+| Mob        | Koszt złota | Zdrowie | Szybkość | Nagroda za zabicie |
+| ---------- | ----------: | ------: | -------: | -----------------: |
+| Podstawowy |          10 |      40 | 2 pola/s |            1 złota |
+| Ciężki     |          30 |     150 | 1 pole/s |            3 złota |
 
 - Wieże: poziom 2 daje ×1,5 obrażeń, poziom 3 daje ×2 względem poziomu 1. Pozostałe statystyki pozostają bez zmian.
 - Ulepszenie wieży z poziomu 1 na 2 kosztuje 100% bazowej ceny wieży, a z 2 na 3 kosztuje 150% bazowej ceny.
-- Moby: poziom 2 daje ×1,5 zdrowia, poziom 3 daje ×2 względem poziomu 1.
-- Globalne ulepszenie danego typu mobów z poziomu 1 na 2 kosztuje 200 złota, a z 2 na 3 kosztuje 400 złota.
+- Moby: poziom 2 daje ×2 zdrowia, poziom 3 daje ×6 względem poziomu 1.
+- Globalne ulepszenie danego typu mobów z poziomu 1 na 2 kosztuje 100 złota, a z 2 na 3 kosztuje 200 złota.
 - Koszt produkcji, szybkość i nagroda za zabicie moba pozostają stałe na wszystkich poziomach.
 - Każdy mob docierający do bazy liczy się jako jedno przepuszczenie, niezależnie od typu i poziomu.
 
@@ -127,7 +127,7 @@ Parametry są punktem wyjścia do testów i znajdują się w centralnej konfigur
 - `onTick` jest wywoływane 10 razy na sekundę czasu symulacji; pierwsze wywołanie następuje przed rozpoczęciem ruchu mobów.
 - Obie strategie otrzymują stan z początku tego samego kroku. Obserwacje są tylko do odczytu, a zmiany gry odbywają się przez API.
 - Akcje jednej strategii wykonują się w kolejności wywołań. W kroku można wykonać wiele akcji, jeśli pozwalają na to złoto i zasady gry.
-- Najpierw rozstrzygane są akcje obu graczy, następnie walka i ruch. Nowo wyprodukowany mob może zostać zaatakowany w tym samym kroku.
+- Najpierw rozstrzygane są akcje obu graczy, następnie walka i ruch. Mob wypuszczony na planszę może zostać zaatakowany w tym samym kroku; oczekujący w kolejce nie jest celem.
 - API zwraca wynik akcji: sukces z identyfikatorem jednostki, której dotyczy akcja (jeśli ma zastosowanie), albo błąd z przyczyną.
 - Dla tych samych kodów i konfiguracji wynik jest powtarzalny. API gry nie udostępnia losowości ani zegara rzeczywistego.
 - Powtarzalność dotyczy strategii opartych na stanie i API gry. Kod używający bezpośrednio mechanizmów JavaScript takich jak `Math.random` lub `Date` nie ma gwarancji powtarzalności; ograniczanie takich mechanizmów jest częścią przyszłej walidacji kodu.
@@ -224,6 +224,10 @@ Kryteria odbioru MVP.0:
 - 2026-10-12: zatwierdzono ręczne uruchamianie deploymentu; push nie aktualizuje wdrożonej strony.
 
 - 2026-10-12: zatwierdzono cały stack: Angular, TypeScript, PixiJS, Vitest, GitHub Actions i GitHub Pages, bez backendu i bazy; deployment ręczny.
+
+- 2026-10-13: po próbach balansu zwiększono bazowy przychód do 30 G/s, obniżono koszty mobów do 10/30 G, wzmocniono podstawową wieżę do 15 obrażeń i poziomy zdrowia mobów do ×2/×6. Przykładowe strategie budują labirynty i przeznaczają większość przychodu na produkcję.
+- 2026-10-13: użytkownik zatwierdził trzy zmiany z analizy ofensywy: bonusy produkcji +0,2/+0,6 G/s z limitem 90 G/s łącznie, najwyżej sześć ofiar wybuchu, nagrody 1/3 G i ulepszenia mobów 100/200 G.
+- 2026-10-13: na prośbę użytkownika dodano krótkie odstępy między wejściami nawet przy zakupie całej fali; domyślnie 0,2 s. Zastępuje to wcześniejszą zasadę braku kolejki.
 
 ## Repozytorium
 

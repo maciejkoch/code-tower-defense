@@ -7,7 +7,13 @@ export type TowerType = 'basic' | 'splash';
 export type MatchStatus = 'ready' | 'running' | 'paused' | 'finished';
 export type MatchResult =
   | { readonly reason: 'leak-limit'; readonly winnerId: PlayerId | null }
-  | { readonly reason: 'interrupted'; readonly winnerId: null };
+  | { readonly reason: 'interrupted'; readonly winnerId: null }
+  | {
+      readonly reason: 'strategy-error';
+      readonly winnerId: null;
+      readonly playerId: PlayerId;
+      readonly message: string;
+    };
 
 export interface MobState {
   readonly id: number;
@@ -44,12 +50,14 @@ export interface LogEntry {
   readonly tick: number;
   readonly time: number;
   readonly message: string;
-  readonly kind: 'success' | 'error';
+  readonly kind: 'success' | 'error' | 'info';
 }
 
 export interface PlayerState {
   readonly id: PlayerId;
   readonly gold: number;
+  /** Total G/s, including permanent production bonuses. */
+  readonly income: number;
   readonly leaks: number;
   readonly mobLevels: Readonly<Record<MobType, number>>;
   readonly board: BoardConfig;
@@ -57,6 +65,9 @@ export interface PlayerState {
   readonly logs: readonly LogEntry[];
   /** Opponent-owned mobs currently on this player's defense field. */
   readonly mobs: readonly MobState[];
+  /** Purchased opponents' units waiting to enter this defense field, in FIFO order. */
+  readonly queuedMobs: readonly MobState[];
+  readonly spawnCooldownRemaining: number;
 }
 
 export interface MatchState {

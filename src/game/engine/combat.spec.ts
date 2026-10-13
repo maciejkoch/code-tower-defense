@@ -1,3 +1,4 @@
+import { BASELINE_CONFIG } from '../balance/profiles';
 import { describe, expect, it } from 'vitest';
 import { buildTower, spawnMob, upgradeTower } from './actions';
 import { resolveCombat, selectTarget } from './combat';
@@ -6,7 +7,7 @@ import type { MatchState, MobState } from './model';
 import { stepMatch } from './step';
 
 function fixture(type: 'basic' | 'splash' = 'basic'): MatchState {
-  const built = buildTower(createMatch(), 1, type, 4, 6).state;
+  const built = buildTower(createMatch(BASELINE_CONFIG), 1, type, 4, 6).state;
   return { ...spawnMob(built, 2, 'basic').state, status: 'running' };
 }
 function withMobs(state: MatchState, patches: readonly Partial<MobState>[]): MatchState {
@@ -93,6 +94,74 @@ describe('combat', () => {
     expect(again.players[0].gold).toBe(result.players[0].gold);
   });
 
+  it('caps a splash at six including the main target, then nearest mobs with ID ties', () => {
+    const config = {
+      ...BASELINE_CONFIG,
+      towers: {
+        ...BASELINE_CONFIG.towers,
+        splash: { ...BASELINE_CONFIG.towers.splash, maxTargets: 6 },
+      },
+    };
+    const state = withMobs({ ...fixture('splash'), config }, [
+      { id: 100, remainingDistance: 1 },
+      { id: 9, x: 5 },
+      { id: 8, x: 5.2 },
+      { id: 7, x: 5.4 },
+      { id: 6, x: 5.6 },
+      { id: 5, x: 6 },
+      { id: 4, x: 6 },
+      { id: 3, x: 6 },
+      { id: 2, x: 6.5 },
+      { id: 1, x: 6.6 },
+    ]);
+    const result = resolveCombat(state, 0);
+    const hits = result.players[0].mobs
+      .filter((mob) => mob.hp === 92)
+      .map((mob) => mob.id)
+      .sort((a, b) => a - b);
+    expect(hits).toEqual([3, 6, 7, 8, 9, 100]);
+    const reversed = {
+      ...state,
+      players: [
+        { ...state.players[0], mobs: [...state.players[0].mobs].reverse() },
+        state.players[1],
+      ] as const,
+    };
+    const again = resolveCombat(reversed, 0);
+    expect(
+      again.players[0].mobs
+        .filter((mob) => mob.hp === 92)
+        .map((mob) => mob.id)
+        .sort((a, b) => a - b),
+    ).toEqual(hits);
+  });
+
+  it('uses the same capped victims for simultaneous explosions and rewards each kill once', () => {
+    let state = buildTower(fixture('splash'), 1, 'splash', 4, 7).state;
+    state = {
+      ...state,
+      config: {
+        ...state.config,
+        towers: {
+          ...state.config.towers,
+          splash: { ...state.config.towers.splash, maxTargets: 6 },
+        },
+      },
+    };
+    state = withMobs(
+      state,
+      Array.from({ length: 8 }, (_, i) => ({ id: 100 + i, hp: 10 })),
+    );
+    const result = resolveCombat(state, 0);
+    expect(result.attacks.map((attack) => attack.targetMobId)).toEqual([100, 100]);
+    expect(result.players[0].mobs.map((mob) => [mob.id, mob.hp])).toEqual([
+      [106, 10],
+      [107, 10],
+    ]);
+    expect(result.players[0].gold - state.players[0].gold).toBe(6 * 5);
+    expect(result.players[0].logs).toHaveLength(6);
+  });
+
   it('keeps a ready tower ready without a target and shoots immediately when one appears', () => {
     const state = withMobs(fixture(), [{ x: 15, y: 6 }]);
     const idle = resolveCombat(state, 2);
@@ -119,7 +188,7 @@ describe('combat', () => {
   });
 
   it('allows a tower built in this tick to damage a newly produced mob before movement', () => {
-    const built = buildTower(createMatch(), 1, 'basic', 3, 6).state;
+    const built = buildTower(createMatch(BASELINE_CONFIG), 1, 'basic', 3, 6).state;
     const state = { ...spawnMob(built, 2, 'basic').state, status: 'running' as const };
     const prepared = resolveCombat(state, 0);
     expect(prepared.tick).toBe(0);
@@ -128,7 +197,7 @@ describe('combat', () => {
   });
 
   it('removes lethal hits before movement, so a killed mob cannot leak or earn a second reward', () => {
-    const built = buildTower(createMatch(), 1, 'basic', 13, 5).state;
+    const built = buildTower(createMatch(BASELINE_CONFIG), 1, 'basic', 13, 5).state;
     const state = withMobs({ ...spawnMob(built, 2, 'basic').state, status: 'running' }, [
       {
         hp: 10,
