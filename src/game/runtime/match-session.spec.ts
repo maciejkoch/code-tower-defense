@@ -67,37 +67,48 @@ describe('match session', () => {
     expect(session.state).toEqual(initial);
   });
 
-  it('finishes the default demonstration at 160.5 seconds with 20 leaks per side', () => {
+  it('finishes the default demonstration at 185.5 seconds with 20 leaks per side', () => {
     const session = new MatchSession();
     session.start();
     for (let i = 0; i < 2000; i++) session.step();
-    expect(session.state.tick).toBe(1605);
+    expect(session.state.tick).toBe(1855);
     expect(session.state.result).toEqual({ reason: 'leak-limit', winnerId: null });
     expect(session.state.players.map((player) => player.leaks)).toEqual([20, 20]);
   });
 
-  it('demonstrates paid actions, both mob types, a rejected wall closure and a sale', () => {
+  it('demonstrates all upgrade levels, snapshots mob health and refunds upgraded defenses', () => {
     const session = new MatchSession();
     session.start();
     expect(session.state.tick).toBe(0);
     expect(session.state.players.map((player) => player.gold)).toEqual([30, 30]);
-    expect(session.state.players[0].towers).toHaveLength(2);
     session.step();
     expect(session.state.players.map((player) => player.gold)).toEqual([31, 31]);
     while (session.state.tick < 880) session.step();
     for (const player of session.state.players) {
-      expect(player.towers).toHaveLength(12);
+      expect(player.towers.map((tower) => tower.level)).toEqual([3, 3]);
+      expect(player.mobLevels.heavy).toBe(2);
       expect(
-        player.logs.some((entry) => entry.time === 88 && entry.message.includes('PATH_BLOCKED')),
+        player.logs.some((entry) => entry.time === 60 && entry.message.includes('MAX_LEVEL')),
       ).toBe(true);
-      expect(player.logs.some((entry) => entry.message === 'Produkcja heavy')).toBe(true);
-      expect(player.logs.some((entry) => entry.message.includes('INSUFFICIENT_GOLD'))).toBe(true);
+      expect(player.logs.some((entry) => entry.message.includes('Zabicie'))).toBe(true);
     }
     while (session.state.tick < 920) session.step();
+    expect(session.state.players[0].mobs.some((mob) => mob.level === 2 && mob.maxHp === 225)).toBe(
+      true,
+    );
+    while (session.state.tick < 1480) session.step();
     for (const player of session.state.players) {
-      expect(player.towers.some((tower) => tower.x === 4 && tower.y === 6)).toBe(false);
+      expect(player.mobLevels.heavy).toBe(3);
+      expect(player.mobs.some((mob) => mob.level === 3 && mob.maxHp === 300)).toBe(true);
+    }
+    while (session.state.tick < 1600) session.step();
+    for (const player of session.state.players) {
+      expect(player.towers).toEqual([]);
       expect(
-        player.logs.some((entry) => entry.time === 92 && entry.message.includes('zwrot 25 G')),
+        player.logs.some((entry) => entry.time === 160 && entry.message.includes('zwrot 87.5 G')),
+      ).toBe(true);
+      expect(
+        player.logs.some((entry) => entry.time === 160 && entry.message.includes('zwrot 175 G')),
       ).toBe(true);
       expect(player.gold).toBeGreaterThanOrEqual(0);
     }

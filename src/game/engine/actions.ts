@@ -1,4 +1,4 @@
-import type { MatchState, MobState, PlayerId, PlayerState, TowerState } from './model';
+import type { MatchState, MobState, MobType, PlayerId, PlayerState, TowerState } from './model';
 import { createDistanceField, distanceAt } from './pathfinding';
 import { moveMob } from './movement';
 import { validatePlacement } from './placement';
@@ -11,7 +11,8 @@ export type ActionError =
   | 'CELL_OCCUPIED'
   | 'PATH_BLOCKED'
   | 'INSUFFICIENT_GOLD'
-  | 'TOWER_NOT_FOUND';
+  | 'TOWER_NOT_FOUND'
+  | 'MAX_LEVEL';
 export type ActionResult<T> =
   ({ readonly ok: true } & T) | { readonly ok: false; readonly error: ActionError };
 export interface ActionOutcome<T> {
@@ -143,5 +144,61 @@ export function spawnMob(
       state.nextEntityId + 1,
     ),
     result: { ok: true, mobId: mob.id },
+  };
+}
+
+export function upgradeTower(
+  state: MatchState,
+  playerId: PlayerId,
+  towerId: unknown,
+): ActionOutcome<{ towerId: number; level: number }> {
+  if (typeof towerId !== 'number' || !Number.isInteger(towerId) || towerId < 1)
+    return rejected(state, 'INVALID_ARGUMENT');
+  const player = state.players[playerId - 1];
+  const tower = player.towers.find((item) => item.id === towerId);
+  if (!tower) return rejected(state, 'TOWER_NOT_FOUND');
+  if (tower.level >= state.config.upgrades.towerDamageMultipliers.length)
+    return rejected(state, 'MAX_LEVEL');
+  const base = state.config.towers[tower.type];
+  const cost = base.cost * state.config.upgrades.towerCostMultipliers[tower.level - 1];
+  if (player.gold < cost) return rejected(state, 'INSUFFICIENT_GOLD');
+  const level = tower.level + 1;
+  const upgraded = {
+    ...tower,
+    level,
+    damage: base.damage * state.config.upgrades.towerDamageMultipliers[level - 1],
+    totalSpent: tower.totalSpent + cost,
+  };
+  return {
+    state: updatePlayer(state, {
+      ...player,
+      gold: player.gold - cost,
+      towers: player.towers.map((item) => (item.id === towerId ? upgraded : item)),
+    }),
+    result: { ok: true, towerId, level },
+  };
+}
+
+export function upgradeMob(
+  state: MatchState,
+  playerId: PlayerId,
+  type: unknown,
+): ActionOutcome<{ type: MobType; level: number }> {
+  if (typeof type !== 'string') return rejected(state, 'INVALID_ARGUMENT');
+  if (type !== 'basic' && type !== 'heavy') return rejected(state, 'UNKNOWN_TYPE');
+  const player = state.players[playerId - 1];
+  const currentLevel = player.mobLevels[type];
+  if (currentLevel >= state.config.upgrades.mobHealthMultipliers.length)
+    return rejected(state, 'MAX_LEVEL');
+  const cost = state.config.upgrades.mobCosts[currentLevel - 1];
+  if (player.gold < cost) return rejected(state, 'INSUFFICIENT_GOLD');
+  const level = currentLevel + 1;
+  return {
+    state: updatePlayer(state, {
+      ...player,
+      gold: player.gold - cost,
+      mobLevels: { ...player.mobLevels, [type]: level },
+    }),
+    result: { ok: true, type, level },
   };
 }

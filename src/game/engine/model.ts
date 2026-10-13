@@ -1,3 +1,4 @@
+import type { AttackEvent } from './events';
 import type { BoardConfig, Cell, GameConfig } from '../config/game-config';
 
 export type PlayerId = 1 | 2;
@@ -60,10 +61,11 @@ export interface PlayerState {
 
 export interface MatchState {
   readonly status: MatchStatus;
-  /** Completed steps; the next step's actions observe this tick. */
+  /** Completed movement intervals; current tick's actions and combat are already prepared. */
   readonly tick: number;
   readonly nextEntityId: number;
   readonly result: MatchResult | null;
+  readonly attacks: readonly AttackEvent[];
   readonly config: GameConfig;
   readonly players: readonly [PlayerState, PlayerState];
 }

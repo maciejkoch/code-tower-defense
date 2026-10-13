@@ -3,6 +3,12 @@ import type { PlayerId } from '../engine/model';
 /** Presentation catalog, independent of game rules. */
 export const APPEARANCE = {
   cellSize: 36,
+  projectiles: {
+    speedCellsPerSecond: 12,
+    minFlightSeconds: 0.12,
+    explosionSeconds: 0.16,
+    radius: 3,
+  },
   padding: 28,
   background: 0x11191f,
   cell: 0x172229,

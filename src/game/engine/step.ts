@@ -1,5 +1,6 @@
 import type { MatchState, PlayerState } from './model';
 import { moveMob } from './movement';
+import { resolveCombat } from './combat';
 import { addIncome } from './economy';
 import { getOutcome } from './outcome';
 import { createDistanceField, sameCell } from './pathfinding';
@@ -28,11 +29,14 @@ export function stepMatch(
   const next: MatchState = {
     ...state,
     tick: state.tick + 1,
+    attacks: [],
     players,
     result,
     status: result ? 'finished' : 'running',
   };
   // Tick 0 is prepared at Start. Finish its movement interval, then prepare
   // the next tick: income and actions precede that tick's next movement.
-  return result ? next : resolveActions(addIncome(next));
+  return result
+    ? next
+    : resolveCombat(resolveActions(addIncome(next)), next.config.simulation.stepSeconds);
 }

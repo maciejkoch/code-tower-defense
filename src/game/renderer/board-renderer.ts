@@ -1,6 +1,10 @@
 import { Application, Graphics, Text } from 'pixi.js';
 import type { BoardConfig } from '../config/game-config';
 import type { MobState, PlayerId, TowerState } from '../engine/model';
+import type { AttackEvent } from '../engine/events';
+import { ProjectileAnimation } from './projectiles';
+import type { PlaybackSpeed } from '../runtime/playback';
+import { drawEffects } from './effects-layer';
 import { drawUnits } from './units-layer';
 import { APPEARANCE as look } from './appearance';
 
@@ -10,7 +14,11 @@ export class BoardRenderer {
   private initialized = false;
   private disposed = false;
   private readonly units = new Graphics();
+  private readonly effects = new Graphics();
   private playerId: PlayerId = 1;
+  private readonly animation = new ProjectileAnimation();
+  private running = false;
+  private speed: PlaybackSpeed = 1;
 
   async mount(host: HTMLElement, board: BoardConfig, playerId: PlayerId): Promise<void> {
     this.playerId = playerId;
@@ -91,13 +99,39 @@ export class BoardRenderer {
       .stroke({ color: look.players[playerId], width: 2 });
     this.app.stage.addChild(markers);
     this.app.stage.addChild(this.units);
+    this.app.stage.addChild(this.effects);
+    this.app.ticker.add((ticker) => {
+      this.animation.advance((ticker.deltaMS / 1000) * this.speed);
+      drawEffects(this.effects, this.animation.projectiles, this.playerId);
+      if (!this.animation.active) this.app.stop();
+    });
     this.app.render();
   }
 
-  drawUnits(mobs: readonly MobState[], towers: readonly TowerState[]): void {
+  drawUnits(
+    mobs: readonly MobState[],
+    towers: readonly TowerState[],
+    attacks: readonly AttackEvent[],
+  ): void {
     if (!this.initialized || this.disposed) return;
     drawUnits(this.units, mobs, towers, this.playerId);
+    this.animation.receive(attacks.filter((attack) => attack.playerId === this.playerId));
+    this.animation.trackTargets(mobs);
+    drawEffects(this.effects, this.animation.projectiles, this.playerId);
+    this.updateTicker();
     this.app.render();
+  }
+
+  setPlayback(running: boolean, speed: PlaybackSpeed): void {
+    this.running = running;
+    this.speed = speed;
+    this.updateTicker();
+  }
+
+  private updateTicker(): void {
+    if (!this.initialized || this.disposed) return;
+    if (this.running && this.animation.active) this.app.start();
+    else this.app.stop();
   }
 
   destroy(): void {

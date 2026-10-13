@@ -2,7 +2,7 @@
 
 Programowalne tower defense: dwa skrypty JavaScript będą rozgrywać lokalny pojedynek w jednej przeglądarce.
 
-**Faza 3 — implementacja gotowa do przeglądu.** Demo korzysta z prawdziwych kosztów, przychodu, produkcji dwóch typów mobów oraz budowy i sprzedaży wież. Wieże zmieniają trasy; błędy akcji i sprzedaż są widoczne w osobnych logach. Walka i ulepszenia powstaną w fazie 4, a strategie JavaScript w fazie 5.
+**Faza 4 — implementacja gotowa do przeglądu.** Wieże strzelają lecącymi pociskami, moby mają paski zdrowia, a wieże oznaczenia poziomów. Działają obrażenia obszarowe, jednoczesne trafienia, nagrody za zabicia i oba rodzaje ulepszeń. Strategie JavaScript z `onTick(state, api)` powstaną w fazie 5.
 
 ## Uruchomienie
 
@@ -31,39 +31,42 @@ npm run test:watch # testy podczas edycji
 
 Testy obejmują inicjalizację i niezależność stanu meczu, przekazywanie konfiguracji, integrację widoku z rendererem, zwalnianie zasobów, błąd inicjalizacji grafiki i dostępność HTML przez axe-core. Test axe działa w jsdom, bez reguły kontrastu, która wymaga prawdziwego renderowania. Testy fazy 2 obejmują też trasowanie, zakręty, nakładanie się mobów, remisy i zwycięstwa, pauzę/reset, przyciski UI i identyczny stan końcowy przy różnych prędkościach oraz nieregularnych klatkach. Rzeczywisty obraz PixiJS wymaga także przeglądu w przeglądarce; status sprawdzeń znajduje się w raporcie odbioru fazy.
 
-## Odbiór fazy 3
+## Odbiór fazy 4
 
-1. Przed startem obie strony mają 200 G i puste plansze. Kliknij **Start**: każda strona buduje basic `(4, 6)` za 50 G i splash `(8, 6)` za 100 G oraz produkuje moba podstawowego za 20 G. Saldo wynosi 30 G, czas pozostaje 0 s do pierwszego kroku ruchu.
-2. W logach są także odrzucone próby: budowa na wejściu (`RESERVED_CELL`), na istniejącej wieży (`CELL_OCCUPIED`) oraz zakup splash przy niedostatecznym saldzie (`INSUFFICIENT_GOLD`). Nie pobierają złota.
-3. Wybierz **4×**, aby szybciej obejrzeć scenariusz. Ściana w kolumnie 4 rośnie co 8 s czasu symulacji, a moby obchodzą ją najkrótszą dostępną drogą. Podstawowe moby są okrągłe, ciężkie kwadratowe. Każda trzecia produkcja jest ciężka.
-4. W **88 s** ostatnia próba zamknięcia ściany zostaje odrzucona jako `PATH_BLOCKED`. Pozostaje droga przez wiersz 0.
-5. W **92 s** wieża `(4, 6)` zostaje sprzedana, z logiem zwrotu **25 G**. Trasy skracają się, a moby w ruchu kończą aktualną krawędź, zanim wybiorą nowy kierunek.
-6. Kliknij **Pauza**: przychód, ruch i akcje zatrzymują się. **Wznów** kontynuuje. **Przerwij** kończy bez zwycięzcy, także podczas pauzy.
-7. Pełna demonstracja kończy się **remisem po 160,5 s** czasu symulacji (około 40 s przy 4×), z 20 przepuszczeniami na stronę. **Nowy mecz** resetuje jednostki, saldo, logi, ID i czas; wybrana prędkość pozostaje ustawieniem odtwarzania.
+1. Kliknij **Start** przy prędkości **1×** lub **0.5×**. Każdy gracz buduje basic `(4, 6)` i splash `(8, 6)`, a na obu polach pojawia się mob przeciwnika. Złoto po pierwszych zakupach wynosi 30 G.
+2. Po wejściu moba w zasięg wieży zobaczysz **lecący pocisk**. Podstawowa wieża trafia jeden cel; pocisk obszarowy kończy się rozszerzającą eksplozją. Paski zdrowia maleją, zabite moby znikają, a log obrońcy pokazuje przyznaną nagrodę.
+3. Sprawdź **Pauza/Wznów** w trakcie lotu pocisku. Pauza zatrzymuje zarówno symulację, jak i animację. Prędkości 0,5×–4× zmieniają tempo obu warstw, zachowując wynik meczu.
+4. W **12 i 24 s** basic rośnie do poziomów 2 i 3. W **48 i 72 s** to samo dzieje się ze splash. Małe znaczniki pod wieżą pokazują jej poziom. Próba kolejnego ulepszenia basic w **60 s** zwraca `MAX_LEVEL`.
+5. W **16, 32 i 96 s** powstają grupy po trzy moby podstawowe; pozwalają obserwować wspólne trafienia obszarowe.
+6. Produkcja ciężkich mobów rośnie w **88 s** do poziomu 2, a w **144 s** do poziomu 3. Ciężki mob wyprodukowany w **92 s** ma 225 HP, a w **148 s** ma 300 HP. Starsze moby zachowują swoje statystyki.
+7. W **160 s** demo sprzedaje obie wieże poziomu 3. Zwroty wynoszą **87,5 G** za basic i **175 G** za splash. Następnie regularne moby przechodzą do baz.
+8. Przy domyślnej konfiguracji mecz kończy się **remisem po 185,5 s** (około 46 s przy 4×), z po 20 przepuszczeń. Sprawdź także przerwanie podczas pauzy i reset przez **Nowy mecz**.
 
-Oba logi pokazują pełną historię, od najnowszych wpisów; starsze wpisy można przewinąć. Wieże basic mają kwadratowy fundament, splash kształt rombu. W tej fazie są przeszkodami i jeszcze nie atakują.
+Obrażenia są rozstrzygane natychmiast w kroku gry; lot pocisku i eksplozja są prezentacją tego trafienia. Dlatego zdrowie może zmienić się przed wizualnym dotarciem pocisku. Animacja podąża za żyjącym celem i nie wykonuje żadnych obliczeń obrażeń. Parametry lotu znajdują się w katalogu wyglądu, niezależnie od reguł walki.
 
-Parametry gry i ekonomii są w `src/game/config/game-config.ts`; harmonogram demonstracji w `demo-config.ts`. Możesz zmienić parametry i uruchomić nowy mecz po przeładowaniu aplikacji. Demo ma domyślne pozycje dla mapy 16 × 12; zmiana rozmiaru mapy może wymagać zmiany jego harmonogramu i współrzędnych.
+Scenariusz zakupów jest w `src/game/config/demo-config.ts`, zasady i balans w `game-config.ts`, a wygląd w `renderer/appearance.ts`. Wszystkie zakupy i ulepszenia w demo są finansowane z salda; nie przyznajemy dodatkowego złota na potrzeby demonstracji.
 
-## Kolejność przeglądu kodu fazy 3
+## Kolejność przeglądu kodu fazy 4
 
-1. `src/game/engine/model.ts` — wieże, moby i logi.
-2. `src/game/engine/placement.ts` — zajętość pól, drożność od wejścia i każdego żywego moba.
-3. `src/game/engine/actions.ts` — synchroniczne wyniki budowy, sprzedaży i produkcji. Sukces zwraca nowy stan i ID; błąd zachowuje poprzedni stan.
-4. `src/game/engine/economy.ts`, `step.ts` i `runtime/match-session.ts` — początkowe akcje przy czasie 0, następnie ruch w stałych odstępach oraz przychód przed akcjami kolejnego kroku. Dziesięć kroków bez wydatków daje 10 G przychodu.
-5. `src/game/runtime/demo.ts` — scenariusz korzystający z tych samych akcji i zapisujący wyniki do logów.
-6. `src/game/renderer/units-layer.ts` i `src/app/player-log/player-log.ts` — prezentacja jednostek i logów.
+1. `src/game/engine/combat.ts` — cel według pozostałej drogi i ID, zasięg w linii prostej, cooldown, jednoczesne obrażenia, śmierć i pojedyncza nagroda.
+2. `src/game/engine/actions.ts` — `upgradeTower` i `upgradeMob`: koszty, limity, zachowanie cooldownu i statystyki kolejnych mobów.
+3. `src/game/engine/step.ts` i `runtime/match-session.ts` — przygotowanie ataków po akcjach obu stron, przed ruchem; zabite moby nie mogą dotrzeć do bazy.
+4. `src/game/engine/events.ts` — dane o rozstrzygniętych strzałach, przeznaczone dla prezentacji.
+5. `src/game/renderer/projectiles.ts`, `effects-layer.ts`, `board-renderer.ts` — lot, eksplozja, deduplikacja zdarzeń, pauza i cykl życia animacji PixiJS.
+6. `src/game/renderer/units-layer.ts` — zdrowie i znaczniki poziomu.
+7. `src/game/runtime/demo.ts` — harmonogram walki i ulepszeń, zastępowany strategiami w fazie 5.
 
-Testy są obok kodu. Obejmują koszty i zwroty, atomowość błędów, współdzielony licznik ID, drożność dla mobów i wejścia, oba końce zajętej krawędzi, zmianę tras bez teleportacji, deterministyczny wynik i sterowanie interfejsem.
+Testy są obok kodu. Obejmują wybór celu i remis ID, zasięg i promień obszarowy, jednoczesne trafienia, nagrody, cooldown, nową wieżę i nowego moba w tym samym kroku, koszty i poziomy ulepszeń, statystyki istniejących mobów, sprzedaż po ulepszeniu, animacje oraz powtarzalność pełnego meczu.
 
 ## Stack i granice
 
 Angular **22.2.2**, PixiJS **8.22.0**, TypeScript **6.0.3**, Vitest **5.0.4**. Dokładne zależności zapisano w `package.json` i `package-lock.json`. Standalone, domyślne w Angularze 22 OnPush i zoneless, `signal`, `computed` oraz signal inputs; bez Zone.js. Signal Forms będą używane, gdy powstaną formularze.
 
-Silnik nie importuje Angulara ani PixiJS. UI czyta stan przez store, a renderer tylko go prezentuje. PixiJS ładuje się osobno i odrysowuje moby oraz wieże po zmianie stanu. Siatka jest tworzona raz; renderer nie prowadzi własnej symulacji. `@xmldom/xmldom` na liście `allowedCommonJsDependencies` jest zależnością PixiJS; wpis jawnie akceptuje jej format modułu, bez zmiany reguł gry.
+Silnik nie importuje Angulara ani PixiJS. UI czyta stan przez store, a renderer tylko go prezentuje. PixiJS ładuje się osobno i odrysowuje moby oraz wieże po zmianie stanu. Siatka jest tworzona raz. Ticker PixiJS działa podczas lotu i eksplozji, a przy pauzie zatrzymuje się; nie prowadzi symulacji gry. `@xmldom/xmldom` na liście `allowedCommonJsDependencies` jest zależnością PixiJS; wpis jawnie akceptuje jej format modułu, bez zmiany reguł gry.
 
 Repozytorium utworzono przez Angular CLI, zgodnie z oficjalnymi [skillami Angulara](https://angular.dev/ai/agent-skills). Katalog `runtime` obsługuje już demonstrację. Katalog `strategy` i pliki strategii powstaną w fazie 5.
 
+- [Odbiór fazy 4](docs/ODBIOR-FAZY-4.md)
 - [Odbiór fazy 3](docs/ODBIOR-FAZY-3.md)
 - [Odbiór fazy 2](docs/ODBIOR-FAZY-2.md)
 - [Odbiór fazy 1](docs/ODBIOR-FAZY-1.md)

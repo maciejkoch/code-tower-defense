@@ -11,7 +11,7 @@
       <div>
         <p class="eyebrow">ARENA / 01</p>
         <h1 id="arena-title">Pole gry</h1>
-        <p class="intro">Budowa labiryntu. Produkcja mobów. Ekonomia.</p>
+        <p class="intro">Walka wież. Fale mobów. Ulepszenia.</p>
       </div>
       <div class="match-state">
         <span class="status"
@@ -62,6 +62,9 @@
             [playerId]="player.id"
             [mobs]="player.mobs"
             [towers]="player.towers"
+            [attacks]="match.state().attacks"
+            [running]="match.state().status === 'running'"
+            [speed]="match.speed()"
           />
           <div class="board-legend">
             <span
@@ -91,13 +94,13 @@
       }
     </div>
     <aside class="phase-note" aria-label="Stan implementacji">
-      <span class="phase-badge">FAZA 03</span>
+      <span class="phase-badge">FAZA 04</span>
       <div>
-        <h2>Demonstracja ekonomii i labiryntu</h2>
+        <h2>Demonstracja walki i ulepszeń</h2>
         <p>
-          Wieże zmieniają trasę mobów. Próba zamknięcia przejścia w {{ wallClosureTime }} s zostaje
-          odrzucona, a sprzedaż wieży w {{ demo.sellSeconds }} s otwiera krótszą drogę. To
-          scenariusz demonstracyjny; wieże jeszcze nie strzelają.
+          Wieże strzelają i otrzymują trzy poziomy ulepszeń. Produkcja ciężkich mobów rośnie w
+          {{ upgradeTimes }} s. W {{ demo.releaseSeconds }} s sprzedaż obrony otwiera drogę do
+          zakończenia meczu.
         </p>
       </div>
     </aside>

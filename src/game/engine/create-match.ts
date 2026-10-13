@@ -18,6 +18,7 @@ export function createMatch(config: GameConfig = GAME_CONFIG): MatchState {
   return {
     status: 'ready',
     result: null,
+    attacks: [],
     nextEntityId: 1,
     tick: 0,
     config: matchConfig,

@@ -9,12 +9,14 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import type { PlaybackSpeed } from '../../game/runtime/playback';
+import type { AttackEvent } from '../../game/engine/events';
 import type { BoardConfig } from '../../game/config/game-config';
 import type { MobState, PlayerId, TowerState } from '../../game/engine/model';
 import { APPEARANCE } from '../../game/renderer/appearance';
 import type { BoardRenderer } from '../../game/renderer/board-renderer';
 
-type RendererHandle = Pick<BoardRenderer, 'mount' | 'drawUnits' | 'destroy'>;
+type RendererHandle = Pick<BoardRenderer, 'mount' | 'drawUnits' | 'setPlayback' | 'destroy'>;
 
 export const LOAD_BOARD_RENDERER = new InjectionToken<() => Promise<RendererHandle>>(
   'Load board renderer',
@@ -66,6 +68,9 @@ export class Board {
   readonly playerId = input.required<PlayerId>();
   readonly mobs = input<readonly MobState[]>([]);
   readonly towers = input<readonly TowerState[]>([]);
+  readonly attacks = input<readonly AttackEvent[]>([]);
+  readonly running = input(false);
+  readonly speed = input<PlaybackSpeed>(1);
   private renderer: RendererHandle | undefined;
   protected readonly error = signal(false);
   private readonly loadRenderer = inject(LOAD_BOARD_RENDERER);
@@ -87,7 +92,11 @@ export class Board {
     afterRenderEffect(() => {
       const mobs = this.mobs();
       const towers = this.towers();
-      this.renderer?.drawUnits(mobs, towers);
+      const attacks = this.attacks();
+      const running = this.running();
+      const speed = this.speed();
+      this.renderer?.setPlayback(running, speed);
+      this.renderer?.drawUnits(mobs, towers, attacks);
     });
     afterRenderEffect((onCleanup) => {
       const host = this.surface().nativeElement;
@@ -111,7 +120,8 @@ export class Board {
           await renderer.mount(host, board, playerId);
           if (!cancelled) {
             this.renderer = loaded;
-            loaded.drawUnits(this.mobs(), this.towers());
+            loaded.setPlayback(this.running(), this.speed());
+            loaded.drawUnits(this.mobs(), this.towers(), this.attacks());
           }
         })
         .catch(() => {

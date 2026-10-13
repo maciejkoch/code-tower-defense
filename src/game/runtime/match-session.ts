@@ -1,5 +1,6 @@
 import { GAME_CONFIG, type GameConfig } from '../config/game-config';
 import { createMatch } from '../engine/create-match';
+import { resolveCombat } from '../engine/combat';
 import { stepMatch } from '../engine/step';
 import type { MatchState } from '../engine/model';
 import { runDemo } from './demo';
@@ -18,7 +19,7 @@ export class MatchSession {
 
   start(): void {
     if (this.current.status === 'ready') {
-      this.current = runDemo({ ...this.current, status: 'running' });
+      this.current = resolveCombat(runDemo({ ...this.current, status: 'running' }), 0);
     } else if (this.current.status === 'paused') {
       this.current = { ...this.current, status: 'running' };
     }

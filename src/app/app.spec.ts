@@ -5,7 +5,7 @@ import { LOAD_BOARD_RENDERER } from './board/board';
 import { run } from 'axe-core';
 import { FRAME_SCHEDULER, MatchStore, type FrameScheduler } from './match/match-store';
 
-const renderer = { mount: vi.fn(), drawUnits: vi.fn(), destroy: vi.fn() };
+const renderer = { mount: vi.fn(), drawUnits: vi.fn(), setPlayback: vi.fn(), destroy: vi.fn() };
 const frames = new Map<number, (time: number) => void>();
 let frameId = 0;
 const scheduler: FrameScheduler = {
@@ -48,7 +48,7 @@ describe('Arena', () => {
     expect(page.querySelector('#player-1')?.textContent).toBe('Gracz 1');
     expect(page.querySelector('#player-2')?.textContent).toBe('Gracz 2');
     expect(page.querySelector('[role="img"]')?.getAttribute('aria-label')).toContain('16 na 12');
-    expect(page.textContent).toContain('scenariusz demonstracyjny');
+    expect(page.textContent).toContain('Demonstracja walki i ulepszeń');
     expect(page.querySelector('[role="alert"]')).toBeNull();
     fixture.destroy();
     expect(renderer.destroy).toHaveBeenCalledTimes(2);
@@ -101,16 +101,19 @@ describe('Arena', () => {
     expect(renderer.drawUnits).toHaveBeenCalledWith(
       store.state().players[0].mobs,
       store.state().players[0].towers,
+      store.state().attacks,
     );
     primary.click();
     await fixture.whenStable();
     const paused = store.state();
+    expect(renderer.setPlayback).toHaveBeenCalledWith(false, 1);
     advanceFrame(100000);
     button('4×').click();
     await fixture.whenStable();
     expect(store.state()).toBe(paused);
     expect(frames.size).toBe(0);
     expect(button('4×').getAttribute('aria-pressed')).toBe('true');
+    expect(renderer.setPlayback).toHaveBeenCalledWith(false, 4);
     expect(primary.textContent).toContain('Wznów');
     primary.click();
     advanceFrame(100000);
@@ -139,11 +142,11 @@ describe('Arena', () => {
     store.setSpeed(4);
     store.start();
     advanceFrame(0);
-    for (let i = 1; i <= 30 && store.state().status === 'running'; i++) advanceFrame(i * 2500);
+    for (let i = 1; i <= 40 && store.state().status === 'running'; i++) advanceFrame(i * 2500);
     await fixture.whenStable();
     const page: HTMLElement = fixture.nativeElement;
     expect(page.querySelector('[role="status"]')?.textContent).toContain('Remis');
-    expect(page.querySelector('[role="status"]')?.textContent).toContain('160.5');
+    expect(page.querySelector('[role="status"]')?.textContent).toContain('185.5');
     expect(frames.size).toBe(0);
     expect(page.querySelector<HTMLButtonElement>('.primary')?.disabled).toBe(true);
     const result = await run(page, {

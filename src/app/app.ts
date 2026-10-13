@@ -17,7 +17,6 @@ import { APPEARANCE } from '../game/renderer/appearance';
 export class App {
   protected readonly match = inject(MatchStore);
   protected readonly demo = DEMO_CONFIG;
-  protected readonly wallClosureTime =
-    DEMO_CONFIG.wallRows.length * DEMO_CONFIG.buildIntervalSeconds;
+  protected readonly upgradeTimes = DEMO_CONFIG.mobUpgradeTimes.join(' i ');
   protected readonly playerColors = APPEARANCE.players;
 }

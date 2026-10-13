@@ -31,6 +31,9 @@ export function drawUnits(
         .stroke({ color, width: 2 });
       graphics.circle(x, y, 5).stroke({ color, width: 2 });
     }
+    for (let level = 0; level < tower.level; level++) {
+      graphics.rect(x - 8 + level * 6, y + 12, 4, 3).fill(color);
+    }
   }
   for (const mob of mobs) {
     const x = padding + (mob.x + 0.5) * size;
@@ -38,5 +41,11 @@ export function drawUnits(
     if (mob.type === 'heavy') graphics.rect(x - 9, y - 9, 18, 18);
     else graphics.circle(x, y, size * 0.22);
     graphics.fill(look.players[mob.ownerId]).stroke({ color: look.background, width: 2 });
+    const ratio = Math.max(0, Math.min(1, mob.hp / mob.maxHp));
+    graphics
+      .rect(x - 11, y - 16, 22, 4)
+      .fill(look.background)
+      .stroke({ color: look.coordinates, width: 0.5 });
+    graphics.rect(x - 10, y - 15, 20 * ratio, 2).fill(look.players[mob.ownerId]);
   }
 }

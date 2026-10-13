@@ -1,5 +1,12 @@
 import { DEMO_CONFIG } from '../config/demo-config';
-import { buildTower, sellTower, spawnMob, type ActionOutcome } from '../engine/actions';
+import {
+  buildTower,
+  sellTower,
+  spawnMob,
+  upgradeMob,
+  upgradeTower,
+  type ActionOutcome,
+} from '../engine/actions';
 import type { MatchState, PlayerId } from '../engine/model';
 
 function record<T>(outcome: ActionOutcome<T>, playerId: PlayerId, message: string): MatchState {
@@ -18,69 +25,55 @@ function record<T>(outcome: ActionOutcome<T>, playerId: PlayerId, message: strin
   };
 }
 
-/** Every demo action uses the same validated economic functions as future strategy APIs. */
+/** Scripted combat and upgrades, later replaced by onTick strategies. */
 export function runDemo(state: MatchState): MatchState {
-  const ticks = (seconds: number) => Math.round(seconds / state.config.simulation.stepSeconds);
+  const tickAt = (seconds: number) => Math.round(seconds / state.config.simulation.stepSeconds);
   for (const playerId of [1, 2] as const) {
     if (state.tick === 0) {
-      state = record(
-        buildTower(state, playerId, 'basic', DEMO_CONFIG.wallX, DEMO_CONFIG.wallStartY),
-        playerId,
-        `Budowa basic (${DEMO_CONFIG.wallX}, ${DEMO_CONFIG.wallStartY})`,
-      );
-      state = record(
-        buildTower(state, playerId, 'splash', DEMO_CONFIG.splashCell.x, DEMO_CONFIG.splashCell.y),
-        playerId,
-        `Budowa splash (${DEMO_CONFIG.splashCell.x}, ${DEMO_CONFIG.splashCell.y})`,
-      );
-      const entry = state.players[playerId - 1].board.entry;
-      state = record(
-        buildTower(state, playerId, 'basic', entry.x, entry.y),
-        playerId,
-        'Próba budowy na wejściu',
-      );
-      state = record(
-        buildTower(state, playerId, 'basic', DEMO_CONFIG.wallX, DEMO_CONFIG.wallStartY),
-        playerId,
-        'Próba ponownej budowy na zajętym polu',
-      );
-      state = record(
-        buildTower(
-          state,
-          playerId,
-          'splash',
-          DEMO_CONFIG.rejectedSplashCell.x,
-          DEMO_CONFIG.rejectedSplashCell.y,
-        ),
-        playerId,
-        `Próba budowy splash za ${state.config.towers.splash.cost} G`,
-      );
-    }
-    const buildInterval = Math.max(1, ticks(DEMO_CONFIG.buildIntervalSeconds));
-    if (state.tick > 0 && state.tick % buildInterval === 0) {
-      const row = DEMO_CONFIG.wallRows[state.tick / buildInterval - 1];
-      if (row !== undefined) {
+      for (const type of ['basic', 'splash'] as const) {
+        const cell = type === 'basic' ? DEMO_CONFIG.basicCell : DEMO_CONFIG.splashCell;
         state = record(
-          buildTower(state, playerId, 'basic', DEMO_CONFIG.wallX, row),
+          buildTower(state, playerId, type, cell.x, cell.y),
           playerId,
-          `Rozbudowa ściany (${DEMO_CONFIG.wallX}, ${row})`,
+          `Budowa ${type} (${cell.x}, ${cell.y})`,
         );
       }
     }
-    if (state.tick === ticks(DEMO_CONFIG.sellSeconds)) {
-      const tower = state.players[playerId - 1].towers.find(
-        (item) => item.x === DEMO_CONFIG.wallX && item.y === DEMO_CONFIG.wallStartY,
-      );
-      if (tower) {
-        const outcome = sellTower(state, playerId, tower.id);
-        const refund = outcome.result.ok ? outcome.result.refund : 0;
-        state = record(outcome, playerId, `Sprzedaż (${tower.x}, ${tower.y}), zwrot ${refund} G`);
+    for (const event of DEMO_CONFIG.towerUpgrades) {
+      if (state.tick !== tickAt(event.time)) continue;
+      const tower = state.players[playerId - 1].towers.find((tower) => tower.type === event.type);
+      if (!tower) continue;
+      const action = upgradeTower(state, playerId, tower.id);
+      const level = action.result.ok ? action.result.level : tower.level;
+      state = record(action, playerId, `Ulepszenie ${event.type}, poziom ${level}`);
+    }
+    if (DEMO_CONFIG.mobUpgradeTimes.some((time) => state.tick === tickAt(time))) {
+      const action = upgradeMob(state, playerId, 'heavy');
+      const level = action.result.ok
+        ? action.result.level
+        : state.players[playerId - 1].mobLevels.heavy;
+      state = record(action, playerId, `Ulepszenie produkcji heavy, poziom ${level}`);
+    }
+    if (state.tick === tickAt(DEMO_CONFIG.releaseSeconds)) {
+      for (const tower of state.players[playerId - 1].towers) {
+        const action = sellTower(state, playerId, tower.id);
+        const refund = action.result.ok ? action.result.refund : 0;
+        state = record(
+          action,
+          playerId,
+          `Sprzedaż ${tower.type} poziomu ${tower.level}, zwrot ${refund} G`,
+        );
       }
     }
-    const spawnInterval = Math.max(1, ticks(DEMO_CONFIG.spawnIntervalSeconds));
-    if (state.tick % spawnInterval === 0) {
-      const type = (state.tick / spawnInterval) % 3 === 2 ? 'heavy' : 'basic';
-      state = record(spawnMob(state, playerId, type), playerId, `Produkcja ${type}`);
+    for (const wave of DEMO_CONFIG.waves) {
+      if (state.tick !== tickAt(wave.time)) continue;
+      for (let i = 0; i < wave.count; i++)
+        state = record(spawnMob(state, playerId, wave.type), playerId, `Produkcja ${wave.type}`);
+    }
+    const pressureStart = tickAt(DEMO_CONFIG.releaseSeconds);
+    const interval = Math.max(1, tickAt(DEMO_CONFIG.pressureIntervalSeconds));
+    if (state.tick >= pressureStart && (state.tick - pressureStart) % interval === 0) {
+      state = record(spawnMob(state, playerId, 'basic'), playerId, 'Produkcja basic');
     }
   }
   return state;
