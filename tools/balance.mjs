@@ -17,6 +17,7 @@ try {
     bundle,
   );
   const quick = process.argv.includes('--quick');
+  const verify = process.argv.includes('--verify');
   const only = process.argv.find((arg) => arg.startsWith('--profile='))?.split('=')[1];
   const limit = Number(
     process.argv.find((arg) => arg.startsWith('--limit='))?.split('=')[1] ?? 240,
@@ -46,6 +47,23 @@ try {
         ...simulate(config, [BENCHMARK_STRATEGIES[first], BENCHMARK_STRATEGIES[second]], limit),
       });
     const current = rows.filter((row) => row.profile === profile);
+    if (verify) {
+      for (const row of current) {
+        if (row.result?.reason !== 'leak-limit')
+          throw new Error(`${profile}: ${row.first}/${row.second} did not finish in ${limit}s`);
+        const reversed = current.find(
+          (other) => other.first === row.second && other.second === row.first,
+        );
+        if (!reversed) continue;
+        const flippedWinner = row.result.winnerId === null ? null : 3 - row.result.winnerId;
+        if (
+          reversed.seconds !== row.seconds ||
+          reversed.result?.winnerId !== flippedWinner ||
+          JSON.stringify(reversed.leaks) !== JSON.stringify([...row.leaks].reverse())
+        )
+          throw new Error(`${profile}: asymmetric result for ${row.first}/${row.second}`);
+      }
+    }
     console.log(
       JSON.stringify({
         profile,

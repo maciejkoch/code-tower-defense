@@ -119,6 +119,8 @@ import { MatchStore } from '../match/match-store';
     .result span {
       color: #c8d5d9;
       font-size: 13px;
+      overflow-wrap: anywhere;
+      min-width: 0;
     }
   `,
 })

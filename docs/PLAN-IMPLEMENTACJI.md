@@ -1,6 +1,6 @@
 # Plan implementacji MVP.0
 
-Aktualizacja: 2026-10-13. Status: faza 1 zaakceptowana i wypchnięta w commicie 2c4449f; faza 2 zaakceptowana i wypchnięta w commicie 53642f8; faza 3 zaakceptowana i wypchnięta w commicie 0a8eefc; faza 4 zaakceptowana i wypchnięta w commicie 453dbae; faza 5 zaimplementowana, oczekuje na odbiór.
+Aktualizacja: 2026-10-13. Status: faza 1 zaakceptowana i wypchnięta w commicie 2c4449f; faza 2 zaakceptowana i wypchnięta w commicie 53642f8; faza 3 zaakceptowana i wypchnięta w commicie 0a8eefc; faza 4 zaakceptowana i wypchnięta w commicie 453dbae; faza 5 z balansem B2 i kolejką zaakceptowana oraz wypchnięta w commicie c6770b3; implementacja fazy 6 gotowa do przeglądu, ręczny odbiór Chrome/Firefox oczekuje.
 
 Punktem wyjścia są WYMAGANIA-MVP.md, API-STRATEGII.md, STACK-I-INFRA.md i ODBIOR-MVP.md. Faza 1 dostarczyła uruchamialny szkielet aplikacji. Plan nie zmienia zatwierdzonego zakresu gry.
 
@@ -75,4 +75,4 @@ Odbiór: wdrożona aplikacja przechodzi scenariusz 23 z ODBIOR-MVP.md, a push sa
 
 ## Najbliższy krok
 
-Odbiór fazy 5 według README.md i ODBIOR-FAZY-5.md. Faza 6 pozostaje nierozpoczęta. Każda kolejna faza wymaga zakończenia odbioru poprzedniej.
+Ręczny odbiór fazy 6 według ODBIOR-FAZY-6.md: Chrome/Firefox, obraz GPU, czytelność i zmiana pliku strategii z przeładowaniem. Kontrole CI, build Pages i ręczny workflow publikacji są przygotowane lokalnie. Faza 7 rozpoczyna się po zakończeniu odbioru oraz zleceniu publikacji; instrukcja w DEPLOYMENT.md.

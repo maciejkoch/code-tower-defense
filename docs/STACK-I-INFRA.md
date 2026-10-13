@@ -1,6 +1,6 @@
 # Stack i infrastruktura
 
-Data: 2026-10-12. Status: cały stack i infrastruktura zatwierdzone przez użytkownika; fazy 1–4 zaakceptowane; faza 5 zaimplementowana i oczekuje na odbiór.
+Data: 2026-10-12. Status: cały stack i infrastruktura zatwierdzone przez użytkownika; fazy 1–4 zaakceptowane; faza 5 i balans B2 zaakceptowane w commicie c6770b3; implementacja fazy 6 gotowa, odbiór Chrome/Firefox oczekuje.
 
 - TypeScript dla silnika i interfejsu; strategie graczy pozostają w JavaScript.
 - Angular 22 i Angular CLI 22 do uruchamiania i budowania aplikacji. Dokładne zgodne wersje poprawek zostaną sprawdzone i przypięte podczas inicjalizacji.
@@ -31,10 +31,10 @@ Rozszerzenie online będzie wymagało backendu do prowadzenia meczu; oddzielenie
 Zmiana propozycji po sugestii użytkownika: Angular zastępuje samodzielny zestaw Vite + HTML/CSS. PixiJS od MVP.0 zatwierdzono 2026-10-12. Angular, PixiJS, Vitest, GitHub Actions, GitHub Pages i ręczny deployment zatwierdzono 2026-10-12.
 
 Źródła:
+
 - https://angular.dev/reference/releases
 - https://angular.dev/guide/testing
-- https://angular.dev/reference/releases
-- https://angular.dev/guide/testingstatic-deploy.html#github-pages
+- https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages
 - https://vitest.dev/guide/
 
 ## Zatwierdzona architektura grafiki

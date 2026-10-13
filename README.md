@@ -2,7 +2,7 @@
 
 Programowalne tower defense: dwa skrypty JavaScript będą rozgrywać lokalny pojedynek w jednej przeglądarce.
 
-**Faza 5 + balans B2 — gotowe do przeglądu.** Dwa pliki JavaScript rozgrywają pełny mecz przez `onTick(state, api)`. Działają wszystkie akcje, migawki tylko do odczytu, osobna pamięć i logi oraz wynik błędu strategii. Przykłady kończą mecz zwycięstwem gracza 1 po 32,2 s symulacji.
+**Faza 6 — implementacja gotowa do odbioru.** Dwa pliki JavaScript rozgrywają pełny mecz przez `onTick(state, api)`. Działają wszystkie akcje, migawki tylko do odczytu, osobna pamięć i logi oraz wynik błędu strategii. Przykłady kończą mecz zwycięstwem gracza 1 po 32,2 s symulacji. Dodano CI, kontrolę kompletności buildu i ręczny workflow GitHub Pages. Odbiór obrazu w Chrome i Firefox pozostaje do wykonania.
 
 ## Uruchomienie
 
@@ -25,14 +25,23 @@ Jeżeli Node i npm mają już wskazane wersje, wystarczą `npm ci` i `npm start`
 npm run typecheck   # TypeScript aplikacji i testów
 npm test           # Vitest przez Angular CLI, jednorazowo
 npm run build      # produkcyjny build w dist/code-tower-defense/browser
-npm run check      # wszystkie powyższe
+npm run check      # typy, testy, build i sprawdzenie jego plików
+npm run build:pages # wariant /code-tower-defense/ i kontrola zasobów
 npm run test:watch # testy podczas edycji
-npm run balance -- --profile=active --limit=300 # 25 pojedynków bez grafiki
+npm run balance -- --profile=active --verify --limit=300 # 25 zweryfikowanych pojedynków
 ```
 
 Testy obejmują inicjalizację i niezależność stanu meczu, przekazywanie konfiguracji, integrację widoku z rendererem, zwalnianie zasobów, błąd inicjalizacji grafiki i dostępność HTML przez axe-core. Test axe działa w jsdom, bez reguły kontrastu, która wymaga prawdziwego renderowania. Testy fazy 2 obejmują też trasowanie, zakręty, nakładanie się mobów, remisy i zwycięstwa, pauzę/reset, przyciski UI i identyczny stan końcowy przy różnych prędkościach oraz nieregularnych klatkach. Rzeczywisty obraz PixiJS wymaga także przeglądu w przeglądarce; status sprawdzeń znajduje się w raporcie odbioru fazy.
 
-## Odbiór fazy 5
+## Odbiór fazy 6 i publikacja
+
+Automatyczne sprawdzenia: 89 testów, typy, build lokalny i Pages oraz 25 pojedynków strategii. [Raport fazy 6](docs/ODBIOR-FAZY-6.md) zawiera wynik każdego scenariusza oraz krótką listę do sprawdzenia w Chrome i Firefox. Logi są dostępne do przewijania klawiaturą, a długie komunikaty zawijają się.
+
+CI uruchamia się po pushu na `main` i dla pull requestów. Publikację przygotowano jako osobny workflow **Deploy GitHub Pages manually**, uruchamiany ręcznie na `main`. Pierwsze włączenie Pages i uruchomienie publikacji należą do fazy 7. Instrukcja: [DEPLOYMENT.md](docs/DEPLOYMENT.md).
+
+Build prowadzi `tools/build.mjs`, który wyłącza dodatkowy optymalizator fragmentów Angular CLI 22.2.2, powodujący brakujące importy PixiJS. Minifikacja produkcyjna pozostaje włączona. `npm run check` i `npm run build:pages` kontrolują istnienie importowanych plików. Do budowania używaj skryptów npm.
+
+## Odbiór rozgrywki
 
 1. Kliknij **Start**. Gracz 1 prowadzi „Adaptacyjny kontratak”, gracz 2 „Ciężkie fale”. Nazwy strategii są widoczne przy planszach; własne decyzje zapisują do oddzielnych logów.
 2. Obie strategie budują ściany z naprzemiennymi przejściami i przeznaczają 60% przychodu na produkcję. Linia pokazuje bieżącą najkrótszą trasę. Przychód rośnie po zakupach (do 90 G/s), a moby wchodzą co 0,2 s. Licznik „W kolejce” pokazuje oczekujące jednostki.
@@ -66,6 +75,8 @@ Silnik nie importuje Angulara ani PixiJS. UI czyta stan przez store, a renderer 
 
 Repozytorium utworzono przez Angular CLI, zgodnie z oficjalnymi [skillami Angulara](https://angular.dev/ai/agent-skills). Katalog `runtime` prowadzi mecz, a `strategy` wykonuje skrypty i udostępnia im API. Stary scenariusz demonstracyjny został zastąpiony strategiami.
 
+- [Odbiór fazy 6](docs/ODBIOR-FAZY-6.md)
+- [Ręczna publikacja](docs/DEPLOYMENT.md)
 - [Balans B2 i kolejka](docs/BALANS-B2.md)
 - [Odbiór fazy 5](docs/ODBIOR-FAZY-5.md)
 - [Odbiór fazy 4](docs/ODBIOR-FAZY-4.md)

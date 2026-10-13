@@ -4,13 +4,16 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "node tools/build.mjs",
+    "build:pages": "node tools/build.mjs --base-href /code-tower-defense/ && npm run verify:pages",
+    "verify:build": "node tools/verify-build.mjs",
+    "verify:pages": "node tools/verify-build.mjs --base-href=/code-tower-defense/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test --watch=false",
     "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.spec.json",
     "test:watch": "ng test",
     "balance": "node tools/balance.mjs",
-    "check": "npm run typecheck && npm test && npm run build"
+    "check": "npm run typecheck && npm test && npm run build && npm run verify:build"
   },
   "private": true,
   "packageManager": "npm@12.0.2",

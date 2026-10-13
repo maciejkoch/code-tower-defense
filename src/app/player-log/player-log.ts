@@ -10,7 +10,7 @@ import type { LogEntry } from '../../game/engine/model';
       <h3>
         LOG GRACZA {{ playerId() }} <span>{{ visibleEntries().length }} wpisów</span>
       </h3>
-      <ol>
+      <ol tabindex="0" [attr.aria-label]="'Wpisy logu gracza ' + playerId()">
         @for (entry of visibleEntries(); track $index) {
           <li [class.error]="entry.kind === 'error'">
             <time>{{ entry.time | number: '1.1-1' }} s</time><span>{{ entry.message }}</span>
@@ -52,6 +52,15 @@ import type { LogEntry } from '../../game/engine/model';
       font-size: 11px;
       line-height: 1.6;
       padding: 3px 0;
+    }
+    ol:focus-visible {
+      outline: 2px solid var(--mint);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+    li span {
+      overflow-wrap: anywhere;
+      min-width: 0;
     }
     time {
       flex: 0 0 50px;
