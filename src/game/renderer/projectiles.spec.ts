@@ -15,6 +15,15 @@ const attack: AttackEvent = {
 };
 
 describe('projectile presentation', () => {
+  it('accepts early ticks again after resetting a match', () => {
+    const animation = new ProjectileAnimation();
+    animation.receive([{ ...attack, tick: 100 }]);
+    animation.reset();
+    expect(animation.active).toBe(false);
+    animation.receive([attack]);
+    expect(animation.projectiles).toHaveLength(1);
+    expect(animation.projectiles[0].attack.tick).toBe(5);
+  });
   it('deduplicates repeated events and preserves active flights when the next shot arrives', () => {
     const animation = new ProjectileAnimation();
     animation.receive([attack]);

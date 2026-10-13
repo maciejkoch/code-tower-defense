@@ -23,6 +23,12 @@ export class ProjectileAnimation {
     return this.flights.length > 0;
   }
 
+  reset(): void {
+    this.flights = [];
+    this.latestTick = -1;
+    this.seen.clear();
+  }
+
   receive(attacks: readonly AttackEvent[]): void {
     const additions: Projectile[] = [];
     for (const attack of attacks) {

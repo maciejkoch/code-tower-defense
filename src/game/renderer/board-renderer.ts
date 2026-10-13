@@ -6,8 +6,13 @@ import type { AttackEvent } from '../engine/events';
 import { ProjectileAnimation } from './projectiles';
 import type { PlaybackSpeed } from '../runtime/playback';
 import { drawEffects } from './effects-layer';
-import { drawUnits } from './units-layer';
 import { APPEARANCE as look } from './appearance';
+import { MobAnimation } from './mob-animation';
+import { MobLayer } from './mob-layer';
+import { BoardSurface } from './board-surface';
+import { loadArt } from './art-assets';
+import { TowerAnimation } from './tower-animation';
+import { TowerLayer } from './tower-layer';
 
 /** Owns GPU resources only. It never changes the match or runs simulation steps. */
 export class BoardRenderer {
@@ -17,10 +22,14 @@ export class BoardRenderer {
   private readonly route = new Graphics();
   private board: BoardConfig | undefined;
   private routeLayout: string | null = null;
-  private readonly units = new Graphics();
   private readonly effects = new Graphics();
   private playerId: PlayerId = 1;
   private readonly animation = new ProjectileAnimation();
+  private readonly mobAnimation = new MobAnimation();
+  private mobLayer: MobLayer | undefined;
+  private surface: BoardSurface | undefined;
+  private readonly towerAnimation = new TowerAnimation();
+  private towerLayer: TowerLayer | undefined;
   private running = false;
   private speed: PlaybackSpeed = 1;
 
@@ -45,6 +54,22 @@ export class BoardRenderer {
       return;
     }
 
+    const [basic, heavy] = await Promise.all(
+      ['chochlik', 'golem'].map((name) => loadArt(`mobs/${name}/walk.png`)),
+    );
+    if (this.disposed) return;
+    this.mobLayer = new MobLayer({ basic, heavy });
+    const [terrain, gate] = await Promise.all(
+      ['terrain', 'gate'].map((name) => loadArt(`board/${name}.png`)),
+    );
+    if (this.disposed) return;
+    this.surface = new BoardSurface(board, terrain, gate);
+    const [crossbow, catapult] = await Promise.all(
+      ['crossbow', 'catapult'].map((name) => loadArt(`towers/${name}.png`)),
+    );
+    if (this.disposed) return;
+    this.towerLayer = new TowerLayer({ basic: crossbow, splash: catapult });
+
     const canvas = this.app.canvas;
     canvas.setAttribute('aria-hidden', 'true');
     canvas.style.width = '100%';
@@ -52,16 +77,7 @@ export class BoardRenderer {
     canvas.style.display = 'block';
     host.append(canvas);
 
-    const grid = new Graphics();
-    for (let y = 0; y < board.height; y++) {
-      for (let x = 0; x < board.width; x++) {
-        grid
-          .rect(padding + x * size, padding + y * size, size, size)
-          .fill((x + y) % 2 ? look.alternateCell : look.cell)
-          .stroke({ color: look.grid, width: 0.5 });
-      }
-    }
-    this.app.stage.addChild(grid);
+    this.app.stage.addChild(this.surface.container);
     this.app.stage.addChild(this.route);
 
     for (let x = 0; x < board.width; x++) {
@@ -74,8 +90,6 @@ export class BoardRenderer {
     const markers = new Graphics();
     const entryX = padding + (board.entry.x + 0.5) * size;
     const entryY = padding + (board.entry.y + 0.5) * size;
-    const baseX = padding + (board.base.x + 0.5) * size;
-    const baseY = padding + (board.base.y + 0.5) * size;
     markers
       .rect(entryX - size / 2 + 2, entryY - size / 2 + 2, size - 4, size - 4)
       .fill({ color: look.entry, alpha: 0.12 });
@@ -86,30 +100,18 @@ export class BoardRenderer {
       .lineTo(entryX + 8, entryY)
       .lineTo(entryX + 1, entryY + 7)
       .stroke({ color: look.entry, width: 2 });
-    markers
-      .rect(baseX - size / 2 + 2, baseY - size / 2 + 2, size - 4, size - 4)
-      .fill({ color: look.players[playerId], alpha: 0.15 });
-    markers
-      .poly([
-        baseX - 9,
-        baseY - 10,
-        baseX + 9,
-        baseY - 10,
-        baseX + 9,
-        baseY + 2,
-        baseX,
-        baseY + 11,
-        baseX - 9,
-        baseY + 2,
-      ])
-      .stroke({ color: look.players[playerId], width: 2 });
     this.app.stage.addChild(markers);
-    this.app.stage.addChild(this.units);
+    this.app.stage.addChild(this.towerLayer.container);
+    this.app.stage.addChild(this.mobLayer.container);
     this.app.stage.addChild(this.effects);
     this.app.ticker.add((ticker) => {
       this.animation.advance((ticker.deltaMS / 1000) * this.speed);
+      this.mobAnimation.advance((ticker.deltaMS / 1000) * this.speed);
+      this.surface?.advance((ticker.deltaMS / 1000) * this.speed);
+      this.towerAnimation.advance((ticker.deltaMS / 1000) * this.speed);
+      this.towerLayer?.render(this.towerAnimation.views, this.playerId);
+      this.mobLayer?.render(this.mobAnimation.views);
       drawEffects(this.effects, this.animation.projectiles, this.playerId);
-      if (!this.animation.active) this.app.stop();
     });
     this.app.render();
   }
@@ -120,8 +122,21 @@ export class BoardRenderer {
     attacks: readonly AttackEvent[],
   ): void {
     if (!this.initialized || this.disposed) return;
+    if (!this.running && mobs.length === 0 && towers.length === 0) {
+      this.mobAnimation.reset();
+      this.animation.reset();
+      this.surface?.reset();
+      this.towerAnimation.reset();
+    }
     this.drawRoute(towers);
-    drawUnits(this.units, mobs, towers, this.playerId);
+    this.mobAnimation.receive(mobs);
+    this.mobLayer?.render(this.mobAnimation.views);
+    this.towerAnimation.receive(
+      towers,
+      mobs,
+      attacks.filter((attack) => attack.playerId === this.playerId),
+    );
+    this.towerLayer?.render(this.towerAnimation.views, this.playerId);
     this.animation.receive(attacks.filter((attack) => attack.playerId === this.playerId));
     this.animation.trackTargets(mobs);
     drawEffects(this.effects, this.animation.projectiles, this.playerId);
@@ -139,13 +154,16 @@ export class BoardRenderer {
     const position = (value: number) => look.padding + (value + 0.5) * look.cellSize;
     this.route.clear().moveTo(position(board.entry.x), position(board.entry.y));
     let cell = board.entry;
+    const cells = [cell];
     for (let i = 0; i < board.width * board.height && !sameCell(cell, board.base); i++) {
       const next = nextCell(board, field, cell);
       if (!next) break;
       this.route.lineTo(position(next.x), position(next.y));
       cell = next;
+      cells.push(cell);
     }
-    this.route.stroke({ color: look.coordinates, width: 1.5, alpha: 0.7 });
+    this.surface?.setRoute(cells);
+    this.route.stroke({ color: 0x6c563a, width: 1, alpha: 0.2 });
   }
 
   setPlayback(running: boolean, speed: PlaybackSpeed): void {
@@ -156,7 +174,7 @@ export class BoardRenderer {
 
   private updateTicker(): void {
     if (!this.initialized || this.disposed) return;
-    if (this.running && this.animation.active) this.app.start();
+    if (this.running) this.app.start();
     else this.app.stop();
   }
 
@@ -166,6 +184,14 @@ export class BoardRenderer {
   }
 
   private release(): void {
+    this.mobLayer?.destroy();
+    this.mobLayer = undefined;
+    this.surface?.destroy();
+    this.surface = undefined;
+    this.mobAnimation.reset();
+    this.towerLayer?.destroy();
+    this.towerLayer = undefined;
+    this.towerAnimation.reset();
     this.app.destroy(true, { children: true });
     this.initialized = false;
   }

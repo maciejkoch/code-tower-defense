@@ -16,6 +16,13 @@ try {
   );
   if (!references.some((value) => value?.endsWith('.js')))
     throw new Error('No application script in the build');
+  // Loaded by PixiJS at runtime, so it does not appear in index.html references.
+  await access(resolve(output, 'assets/mobs/chochlik/walk.png'));
+  await access(resolve(output, 'assets/mobs/golem/walk.png'));
+  await access(resolve(output, 'assets/board/terrain.png'));
+  await access(resolve(output, 'assets/board/gate.png'));
+  await access(resolve(output, 'assets/towers/crossbow.png'));
+  await access(resolve(output, 'assets/towers/catapult.png'));
   for (const reference of references) {
     const url = new URL(reference, `https://pages.invalid${prefix}`);
     if (url.origin !== 'https://pages.invalid' || !url.pathname.startsWith(prefix))

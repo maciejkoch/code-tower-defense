@@ -6,6 +6,8 @@ Programowalne tower defense: dwa skrypty JavaScript będą rozgrywać lokalny po
 
 ## Uruchomienie
 
+Grafika średniowiecza jest zaimplementowana: chochliki i golemy mają animowany ruch, a kusze i katapulty celują oraz strzelają. Plansza ma trawę, drogę dopasowaną do labiryntu i bramę z animowanymi pochodniami. Pauza i prędkość odtwarzania obejmują wszystkie efekty. [Zasoby, animacje i weryfikacja](docs/GRAFIKA-SREDNIOWIECZE.md) — 102 testy, build lokalny i Pages oraz kontrola w Chrome.
+
 Wymagane: Node **22.23.2** i npm **12.0.2**. Wersję Node zapisano także w `.nvmrc`.
 
 ```sh
