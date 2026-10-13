@@ -10,11 +10,11 @@ import {
   viewChild,
 } from '@angular/core';
 import type { BoardConfig } from '../../game/config/game-config';
-import type { PlayerId } from '../../game/engine/model';
+import type { MobState, PlayerId } from '../../game/engine/model';
 import { APPEARANCE } from '../../game/renderer/appearance';
 import type { BoardRenderer } from '../../game/renderer/board-renderer';
 
-type RendererHandle = Pick<BoardRenderer, 'mount' | 'destroy'>;
+type RendererHandle = Pick<BoardRenderer, 'mount' | 'drawMobs' | 'destroy'>;
 
 export const LOAD_BOARD_RENDERER = new InjectionToken<() => Promise<RendererHandle>>(
   'Load board renderer',
@@ -64,6 +64,8 @@ export const LOAD_BOARD_RENDERER = new InjectionToken<() => Promise<RendererHand
 export class Board {
   readonly board = input.required<BoardConfig>();
   readonly playerId = input.required<PlayerId>();
+  readonly mobs = input<readonly MobState[]>([]);
+  private renderer: RendererHandle | undefined;
   protected readonly error = signal(false);
   private readonly loadRenderer = inject(LOAD_BOARD_RENDERER);
   private readonly surface = viewChild.required<ElementRef<HTMLElement>>('surface');
@@ -71,7 +73,7 @@ export class Board {
     const board = this.board();
     return (
       `Pole obrony gracza ${this.playerId()}: ${board.width} na ${board.height} pól. ` +
-      `Wejście (${board.entry.x}, ${board.entry.y}), baza (${board.base.x}, ${board.base.y}). Plansza jest pusta.`
+      `Wejście (${board.entry.x}, ${board.entry.y}), baza (${board.base.x}, ${board.base.y}). Moby na polu: ${this.mobs().length}.`
     );
   });
   protected readonly aspectRatio = computed(() => {
@@ -81,6 +83,10 @@ export class Board {
   });
 
   constructor() {
+    afterRenderEffect(() => {
+      const mobs = this.mobs();
+      this.renderer?.drawMobs(mobs);
+    });
     afterRenderEffect((onCleanup) => {
       const host = this.surface().nativeElement;
       const board = this.board();
@@ -90,6 +96,7 @@ export class Board {
       onCleanup(() => {
         cancelled = true;
         renderer?.destroy();
+        this.renderer = undefined;
       });
       // Keep the Angular shell independent of the heavier GPU bundle.
       void this.loadRenderer()
@@ -100,6 +107,10 @@ export class Board {
           }
           renderer = loaded;
           await renderer.mount(host, board, playerId);
+          if (!cancelled) {
+            this.renderer = loaded;
+            loaded.drawMobs(this.mobs());
+          }
         })
         .catch(() => {
           renderer?.destroy();

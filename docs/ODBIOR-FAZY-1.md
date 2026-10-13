@@ -1,6 +1,6 @@
 # Odbiór fazy 1
 
-Data: 2026-10-12. Status: implementacja gotowa, oczekuje na przegląd użytkownika.
+Data: 2026-10-12. Status: zaakceptowana przez użytkownika; commit 2c4449f wypchnięty do origin/main.
 
 ## Dostarczony efekt
 
@@ -22,4 +22,4 @@ Data: 2026-10-12. Status: implementacja gotowa, oczekuje na przegląd użytkowni
 
 Scenariusz ręcznego odbioru: README.md → „Odbiór fazy 1”.
 
-Faza 1 pokazuje nieruchomy stan początkowy; nie zawiera ruchu, walki, wykonywania strategii ani sterowania meczem. Faza 2 nie została rozpoczęta. Nie wykonano commit, push ani deploymentu.
+Zakres fazy 1 obejmował nieruchomy stan początkowy. Użytkownik zaakceptował go, polecił commit i push oraz rozpoczęcie fazy 2; fazę 1 zapisano jako 2c4449f na origin/main. Kolejny odbiór opisuje ODBIOR-FAZY-2.md. Deployment nie został wykonany.

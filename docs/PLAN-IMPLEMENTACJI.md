@@ -1,8 +1,8 @@
 # Plan implementacji MVP.0
 
-Data: 2026-10-12. Status: plan i architektura zaakceptowane; faza 1 zaimplementowana, oczekuje na przegląd użytkownika.
+Aktualizacja: 2026-10-13. Status: faza 1 zaakceptowana i wypchnięta w commicie 2c4449f; faza 2 zaimplementowana, oczekuje na odbiór.
 
-Punktem wyjścia są WYMAGANIA-MVP.md, API-STRATEGII.md, STACK-I-INFRA.md i ODBIOR-MVP.md. Repozytorium zawiera dokumentację; implementacja nie została rozpoczęta. Plan nie zmienia zatwierdzonego zakresu gry.
+Punktem wyjścia są WYMAGANIA-MVP.md, API-STRATEGII.md, STACK-I-INFRA.md i ODBIOR-MVP.md. Faza 1 dostarczyła uruchamialny szkielet aplikacji. Plan nie zmienia zatwierdzonego zakresu gry.
 
 ## Sposób pracy
 
@@ -71,4 +71,4 @@ Odbiór: wdrożona aplikacja przechodzi scenariusz 23 z ODBIOR-MVP.md, a push sa
 
 ## Najbliższy krok
 
-Odbiór fazy 1 według README.md. Faza 2 pozostaje nierozpoczęta. Każda kolejna faza wymaga zakończenia odbioru poprzedniej.
+Odbiór fazy 2 według README.md i ODBIOR-FAZY-2.md. Faza 3 pozostaje nierozpoczęta. Każda kolejna faza wymaga zakończenia odbioru poprzedniej.

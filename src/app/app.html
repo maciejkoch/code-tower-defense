@@ -11,14 +11,17 @@
       <div>
         <p class="eyebrow">ARENA / 01</p>
         <h1 id="arena-title">Pole gry</h1>
-        <p class="intro">Dwie strategie. Dwa pola obrony. Jeden pojedynek.</p>
+        <p class="intro">Demonstracja ruchu. Dwa pola obrony.</p>
       </div>
       <div class="match-state">
-        <span class="status"><span class="status-dot" aria-hidden="true"></span>Przygotowanie</span>
-        <span class="clock">{{ match.time() }}<span> s</span></span>
+        <span class="status"
+          ><span class="status-dot" aria-hidden="true"></span>{{ match.statusLabel() }}</span
+        >
+        <span class="clock">{{ match.time() | number: '1.1-1' }}<span> s</span></span>
         <span class="clock-label">CZAS SYMULACJI</span>
       </div>
     </section>
+    <app-match-controls />
     <div class="boards">
       @for (player of match.state().players; track player.id) {
         <section
@@ -54,7 +57,7 @@
               <dd>+{{ match.state().config.economy.goldPerSecond }} <span>G/s</span></dd>
             </div>
           </dl>
-          <app-board [board]="player.board" [playerId]="player.id" />
+          <app-board [board]="player.board" [playerId]="player.id" [mobs]="player.mobs" />
           <div class="board-legend">
             <span
               ><span class="entry-icon" aria-hidden="true">→</span> Wejście
@@ -82,10 +85,13 @@
       }
     </div>
     <aside class="phase-note" aria-label="Stan implementacji">
-      <span class="phase-badge">FAZA 01</span>
+      <span class="phase-badge">FAZA 02</span>
       <div>
-        <h2>Plansze gotowe do rozbudowy</h2>
-        <p>To podgląd stanu początkowego. Ruch mobów i sterowanie meczem pojawią się w fazie 2.</p>
+        <h2>Demonstracja ruchu mobów</h2>
+        <p>
+          Każda strona wysyła jednego moba na sekundę. Moby mają kolor przeciwnika. To scenariusz
+          demonstracyjny: złoto jest stałe, walka i strategie pojawią się później.
+        </p>
       </div>
     </aside>
   </main>

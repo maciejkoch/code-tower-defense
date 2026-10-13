@@ -10,10 +10,13 @@ export function createMatch(config: GameConfig = GAME_CONFIG): MatchState {
     leaks: 0,
     mobLevels: { basic: 1, heavy: 1 },
     board: structuredClone(matchConfig.board),
+    mobs: [],
   });
 
   return {
     status: 'ready',
+    result: null,
+    nextEntityId: 1,
     tick: 0,
     config: matchConfig,
     players: [createPlayer(1), createPlayer(2)],

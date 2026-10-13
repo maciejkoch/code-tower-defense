@@ -1,6 +1,6 @@
 import { Application, Graphics, Text } from 'pixi.js';
 import type { BoardConfig } from '../config/game-config';
-import type { PlayerId } from '../engine/model';
+import type { MobState, PlayerId } from '../engine/model';
 import { APPEARANCE as look } from './appearance';
 
 /** Owns GPU resources only. It never changes the match or runs simulation steps. */
@@ -8,6 +8,7 @@ export class BoardRenderer {
   private readonly app = new Application();
   private initialized = false;
   private disposed = false;
+  private readonly units = new Graphics();
 
   async mount(host: HTMLElement, board: BoardConfig, playerId: PlayerId): Promise<void> {
     const { cellSize: size, padding } = look;
@@ -86,6 +87,21 @@ export class BoardRenderer {
       ])
       .stroke({ color: look.players[playerId], width: 2 });
     this.app.stage.addChild(markers);
+    this.app.stage.addChild(this.units);
+    this.app.render();
+  }
+
+  drawMobs(mobs: readonly MobState[]): void {
+    if (!this.initialized || this.disposed) return;
+    this.units.clear();
+    for (const mob of mobs) {
+      const x = look.padding + (mob.x + 0.5) * look.cellSize;
+      const y = look.padding + (mob.y + 0.5) * look.cellSize;
+      this.units
+        .circle(x, y, look.cellSize * 0.22)
+        .fill(look.players[mob.ownerId])
+        .stroke({ color: look.background, width: 2 });
+    }
     this.app.render();
   }
 

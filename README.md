@@ -2,7 +2,7 @@
 
 Programowalne tower defense: dwa skrypty JavaScript będą rozgrywać lokalny pojedynek w jednej przeglądarce.
 
-**Faza 1 — gotowa do przeglądu.** Aplikacja wyświetla dwa pola obrony 16 × 12 w PixiJS, wejścia, bazy i początkowe statystyki. Symulacja i sterowanie meczem pojawią się w fazie 2. Strategie i formularze nie są jeszcze zaimplementowane.
+**Faza 2 — implementacja gotowa do przeglądu.** Moby poruszają się po obu planszach, można uruchomić, wstrzymać, wznowić i przerwać demonstrację, zmienić prędkość oraz utworzyć nowy mecz. Symetryczny scenariusz kończy się remisem po 26,5 s czasu symulacji. Ekonomia, walka i strategie pozostają w kolejnych fazach.
 
 ## Uruchomienie
 
@@ -29,35 +29,43 @@ npm run check      # wszystkie powyższe
 npm run test:watch # testy podczas edycji
 ```
 
-Testy obejmują inicjalizację i niezależność stanu meczu, przekazywanie konfiguracji, integrację widoku z rendererem, zwalnianie zasobów, błąd inicjalizacji grafiki i dostępność HTML przez axe-core. Test axe działa w jsdom, bez reguły kontrastu, która wymaga prawdziwego renderowania. Renderowanie PixiJS sprawdzamy także w przeglądarce.
+Testy obejmują inicjalizację i niezależność stanu meczu, przekazywanie konfiguracji, integrację widoku z rendererem, zwalnianie zasobów, błąd inicjalizacji grafiki i dostępność HTML przez axe-core. Test axe działa w jsdom, bez reguły kontrastu, która wymaga prawdziwego renderowania. Testy fazy 2 obejmują też trasowanie, zakręty, nakładanie się mobów, remisy i zwycięstwa, pauzę/reset, przyciski UI i identyczny stan końcowy przy różnych prędkościach oraz nieregularnych klatkach. Rzeczywisty obraz PixiJS wymaga także przeglądu w przeglądarce; status sprawdzeń znajduje się w raporcie odbioru fazy.
 
-## Odbiór fazy 1
+## Odbiór fazy 2
 
-1. Uruchom aplikację. Na szerokim oknie zobaczysz dwa pola obok siebie, na wąskim jedno pod drugim.
-2. Sprawdź siatki 16 × 12, wejście ze strzałką `(0, 6)` i bazę z tarczą `(15, 6)` dla obu graczy.
-3. Każdy gracz ma 200 złota, 0/20 przepuszczeń i poziom 1 obu typów mobów. Przychód +10 G/s to parametr przyszłej symulacji; w tej fazie saldo i czas nie rosną.
-4. Odśwież stronę i zmień szerokość okna. Plansze powinny zachować proporcje i poprawnie się załadować.
-5. Opcjonalnie zmień `economy.startingGold` w `src/game/config/game-config.ts` i odśwież stronę: oba salda powinny używać nowej wartości. Cofnij zmianę po sprawdzeniu.
+1. Otwórz aplikację i kliknij **Start**. Na obu polach pojawia się jeden mob na sekundę symulacji, także w pierwszym kroku. Moby mają kolor wysyłającego gracza; idą od `(0, 6)` do `(15, 6)`.
+2. Kliknij **Pauza**: czas, pozycje i przepuszczenia zatrzymują się. **Wznów** kontynuuje ten sam mecz.
+3. Sprawdź **0.5×, 1×, 2× i 4×**. Zmienia się tempo odtwarzania, a silnik nadal wykonuje kroki po 0,1 s. Prędkość można zmieniać również podczas pauzy.
+4. Pozwól demonstracji dobiec do końca. Przy domyślnej konfiguracji jest to **remis, 20/20 przepuszczeń po obu stronach, czas 26,5 s**. Przy 4× trwa to około 7 s czasu rzeczywistego. Po zakończeniu stan przestaje się zmieniać.
+5. Kliknij **Nowy mecz**. Wracają czas 0, brak mobów i 0 przepuszczeń; wybrana prędkość pozostaje ustawieniem odtwarzania. Możesz ponownie kliknąć Start.
+6. W kolejnym meczu kliknij **Pauza**, potem **Przerwij**: wynik to „Mecz przerwany — bez zwycięzcy”. Przerwanie działa także w trakcie ruchu.
 
-## Kolejność przeglądu kodu
+Demo produkuje darmowe moby podstawowe. Złoto pozostaje 200, a pokazany przychód +10 G/s jest parametrem przyszłej ekonomii. Na pustych planszach najkrótsza trasa jest prosta; trasy z przeszkodami i zakrętami są sprawdzane w testach, a widoczny labirynt powstanie w fazie 3.
 
-1. `src/game/config/game-config.ts` — wspólna konfiguracja zasad gry, w tym parametry kolejnych faz.
-2. `src/game/engine/model.ts` i `create-match.ts` — minimalny model stanu początkowego, bez zależności od przeglądarki i Angulara.
-3. `src/app/match/match-store.ts` — stan interfejsu oparty na Signals.
-4. `src/game/renderer/appearance.ts` i `board-renderer.ts` — katalog wyglądu, rysowanie siatki i cykl życia PixiJS. Renderowanie nie zmienia stanu gry.
-5. `src/app/board/board.ts` — komponent Angulara, leniwe ładowanie renderera, sprzątanie i błędy.
-6. `src/app/app.ts`, `app.html`, `app.css` — ekran areny.
+Numer kroku w stanie oznacza liczbę zakończonych kroków; jego iloczyn z długością kroku daje widoczny czas. Akcje demonstracji są rozstrzygane na początku kroku, przed ruchem. Opóźnione klatki nie zmieniają wielkości kroków: zaległe kroki są zachowywane i wykonywane partiami. Pauza zatrzymuje dopływ czasu odtwarzania.
 
-Testy znajdują się obok kodu, w plikach `.spec.ts`.
+## Kolejność przeglądu kodu fazy 2
+
+1. `src/game/engine/model.ts` — stan moba, krawędzi ruchu i wyniku meczu.
+2. `src/game/engine/pathfinding.ts` — odległości od bazy (BFS) i deterministyczny wybór kierunku.
+3. `src/game/engine/movement.ts`, `step.ts`, `outcome.ts` — ruch, przepuszczenia i wynik obu pól w jednym kroku.
+4. `src/game/runtime/demo.ts`, `match-session.ts`, `playback.ts` — scenariusz, cykl życia meczu i odtwarzanie stałych kroków.
+5. `src/app/match/match-store.ts` — Signals i planowanie klatek, powiązane z czasem życia areny.
+6. `src/app/match-controls/match-controls.ts` — sterowanie i wynik; jeden przycisk Start/Pauza/Wznów zachowuje fokus.
+7. `src/app/board/board.ts` i `src/game/renderer/board-renderer.ts` — przekazywanie mobów do renderera i ich prezentacja.
+
+Testy znajdują się obok kodu, w plikach `.spec.ts`. Parametry gry są w `game-config.ts`, odstęp demonstracyjnej produkcji w `demo-config.ts`, a wygląd w `appearance.ts`.
 
 ## Stack i granice
 
 Angular **22.2.2**, PixiJS **8.22.0**, TypeScript **6.0.3**, Vitest **5.0.4**. Dokładne zależności zapisano w `package.json` i `package-lock.json`. Standalone, domyślne w Angularze 22 OnPush i zoneless, `signal`, `computed` oraz signal inputs; bez Zone.js. Signal Forms będą używane, gdy powstaną formularze.
 
-Silnik nie importuje Angulara ani PixiJS. UI czyta stan przez store, a renderer tylko go prezentuje. PixiJS ładuje się osobno i w tej fazie rysuje raz, bez ciągłej pętli animacji. `@xmldom/xmldom` na liście `allowedCommonJsDependencies` jest zależnością PixiJS; wpis jawnie akceptuje jej format modułu, bez zmiany reguł gry.
+Silnik nie importuje Angulara ani PixiJS. UI czyta stan przez store, a renderer tylko go prezentuje. PixiJS ładuje się osobno i odrysowuje moby po zmianie stanu. Siatka jest tworzona raz; renderer nie prowadzi własnej symulacji. `@xmldom/xmldom` na liście `allowedCommonJsDependencies` jest zależnością PixiJS; wpis jawnie akceptuje jej format modułu, bez zmiany reguł gry.
 
-Repozytorium utworzono przez Angular CLI, zgodnie z oficjalnymi [skillami Angulara](https://angular.dev/ai/agent-skills). Katalogi `strategy`, `runtime` i pliki strategii powstaną w odpowiednich fazach, bez pustych implementacji wyprzedzających plan.
+Repozytorium utworzono przez Angular CLI, zgodnie z oficjalnymi [skillami Angulara](https://angular.dev/ai/agent-skills). Katalog `runtime` obsługuje już demonstrację. Katalog `strategy` i pliki strategii powstaną w fazie 5.
 
+- [Odbiór fazy 2](docs/ODBIOR-FAZY-2.md)
+- [Odbiór fazy 1](docs/ODBIOR-FAZY-1.md)
 - [Plan faz](docs/PLAN-IMPLEMENTACJI.md)
 - [Wymagania MVP](docs/WYMAGANIA-MVP.md)
 - [Stack i infrastruktura](docs/STACK-I-INFRA.md)
